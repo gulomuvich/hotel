@@ -21,16 +21,16 @@ import {
   Menu,
   SimpleGrid,
   Box,
-  Divider,
   Paper,
-  Tooltip
+  Avatar,
+  SegmentedControl,
+  ScrollArea
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   IconCrown,
   IconBed,
   IconCar,
-  IconCarSuv,
   IconToolsKitchen2,
   IconUsers,
   IconGlobe,
@@ -41,18 +41,18 @@ import {
   IconShieldCheck,
   IconClock,
   IconTrash,
-  IconRefresh,
-  IconPlus,
   IconStar,
   IconCheck,
   IconPrinter,
   IconQrcode,
-  IconHelicopter,
-  IconSailboat,
-  IconBuildingSkyscraper
+  IconMessageDots,
+  IconSend,
+  IconUserPlus,
+  IconIdBadge2,
+  IconDiamond
 } from '@tabler/icons-react';
 
-// --- DATA TYPES ---
+// --- TYPES ---
 interface Room {
   id: string;
   category: 'deluxe' | 'presidential' | 'royal' | 'villa';
@@ -88,15 +88,35 @@ interface MenuItem {
   badge: string;
 }
 
-interface StaffMember {
+interface ClientUser {
   id: string;
   name: string;
-  role: string;
-  dept: string;
-  shift: string;
-  status: 'Navbatchilikda' | 'Dam olishda' | 'Tanaffusda';
-  rating: string;
+  tier: 'Diamond VIP' | 'Royal Platinum' | 'Gold Elite';
+  room: string;
+  spentUSD: number;
   phone: string;
+  email: string;
+  checkIn: string;
+  checkOut: string;
+  status: 'Joylashgan' | 'Kutilmoqda' | 'Tugallangan';
+}
+
+interface AdminUser {
+  id: string;
+  name: string;
+  role: 'Bosh Menejer' | 'VIP Concierge Lead' | 'Tizim Administratori' | 'Oshxona Boshlig\'i';
+  email: string;
+  access: 'Super Admin' | 'Menejer' | 'Operator';
+  lastActive: string;
+}
+
+interface ChatMessage {
+  id: string;
+  sender: 'client' | 'admin';
+  senderName: string;
+  text: string;
+  time: string;
+  isRead: boolean;
 }
 
 interface CartItem {
@@ -104,8 +124,8 @@ interface CartItem {
   quantity: number;
 }
 
-// Initial Data
-const INITIAL_ROOMS: Room[] = [
+// --- ENRICHED DATASETS ---
+const EXPANDED_ROOMS: Room[] = [
   {
     id: 'deluxe-1',
     category: 'deluxe',
@@ -133,6 +153,19 @@ const INITIAL_ROOMS: Room[] = [
     badge: 'Biznes VIP'
   },
   {
+    id: 'deluxe-3',
+    category: 'deluxe',
+    title: 'Grand Azure Deluxe Corner',
+    desc: 'Burchakli 270 daraja ko\'rfaz manzarasi, xususiy jakuzi va mini-spa vanna xonasi.',
+    priceUSD: 650,
+    sqm: 95,
+    guests: '2 Mehmon',
+    bed: '1 Super King Bed',
+    image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80',
+    amenities: ['270° Manzara', 'Oltin Bezaklar', 'Xususiy Bar', 'Hermès Kosmetika'],
+    badge: 'Yangi Dizayn'
+  },
+  {
     id: 'presidential-1',
     category: 'presidential',
     title: 'Grand Presidential Suite',
@@ -157,6 +190,19 @@ const INITIAL_ROOMS: Room[] = [
     image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
     amenities: ['Sharob Kolleksiyasi', 'Shaxsiy Sauna', 'Marmar Kamin', 'Heli Transfer'],
     badge: 'Imperial Hashamat'
+  },
+  {
+    id: 'presidential-3',
+    category: 'presidential',
+    title: 'Monarch Sovereign Suite',
+    desc: 'Monarxlar darajasidagi hashamat: xususiy kutubxona, shaxsiy lift va diplomatik xavfsizlik.',
+    priceUSD: 1950,
+    sqm: 260,
+    guests: '5 Mehmon',
+    bed: '2 King + 1 Queen',
+    image: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Shaxsiy Lift', 'Qurolli Xavfsizlik', 'Xususiy Zal', 'Kutubxona'],
+    badge: 'Qirollik Darajasi'
   },
   {
     id: 'royal-1',
@@ -212,7 +258,7 @@ const INITIAL_ROOMS: Room[] = [
   }
 ];
 
-const INITIAL_FLEET: FleetItem[] = [
+const EXPANDED_FLEET: FleetItem[] = [
   {
     id: 'rolls_phantom',
     name: 'Rolls-Royce Phantom VIII',
@@ -248,10 +294,28 @@ const INITIAL_FLEET: FleetItem[] = [
     seats: '4 O\'rin',
     speed: 'W12 635 HP',
     image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lamborghini_urus',
+    name: 'Lamborghini Urus Mansory',
+    priceUSD: 480,
+    type: 'Super SUV VIP',
+    seats: '4 O\'rin',
+    speed: '4.0L V8 Twin-Turbo 650HP',
+    image: 'https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'range_rover_sv',
+    name: 'Range Rover SV Autobiography',
+    priceUSD: 260,
+    type: 'Luxury British SUV',
+    seats: '5 O\'rin',
+    speed: 'V8 530 HP Dynamic',
+    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
-const INITIAL_MENU: MenuItem[] = [
+const EXPANDED_MENU: MenuItem[] = [
   {
     id: 'dish-1',
     category: 'mains',
@@ -311,106 +375,177 @@ const INITIAL_MENU: MenuItem[] = [
     prepTime: '5 daqiqa',
     image: 'https://images.unsplash.com/photo-1569919659476-f0852f6834b7?auto=format&fit=crop&w=600&q=80',
     badge: 'Vintage 2013'
+  },
+  {
+    id: 'dish-7',
+    category: 'mains',
+    title: 'Château Filet Mignon Rossini',
+    desc: 'Foie gras, qora tryufel shavings va 50 yillik Madeira sousi bilan elita go\'sht taomi.',
+    priceUSD: 165,
+    prepTime: '25 daqiqa',
+    image: 'https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80',
+    badge: 'Chef Special'
+  },
+  {
+    id: 'dish-8',
+    category: 'desserts',
+    title: 'Grand Madagascar Vanilla Soufflé',
+    desc: 'Havo kabi yengil issiq sufle, oltin qoplangan malina sorbeti bilan.',
+    priceUSD: 45,
+    prepTime: '20 daqiqa',
+    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80',
+    badge: 'Klassik Gurme'
   }
 ];
 
-const INITIAL_STAFF: StaffMember[] = [
-  { id: 'emp-1', name: 'Jasur Karimov', role: 'Bosh Konsyerj & VIP Protokol', dept: 'Qabulxona & Konsyerj', shift: 'Kunduzgi (08:00 - 18:00)', status: 'Navbatchilikda', rating: '5.0 ★', phone: '+998 90 111 22 33' },
-  { id: 'emp-2', name: 'Alain Ducasse', role: 'Bosh Oshpaz (Executive Chef 3★)', dept: 'Oshxona & Restoran', shift: 'Moslashuvchan', status: 'Navbatchilikda', rating: '5.0 ★', phone: '+998 90 222 33 44' },
-  { id: 'emp-3', name: 'Alisher Rustamov', role: 'Katta VIP Haydovchi (Rolls Fleet)', dept: 'VIP Haydovchilar', shift: '24/7 Navbatchilik', status: 'Navbatchilikda', rating: '4.9 ★', phone: '+998 90 333 44 55' },
-  { id: 'emp-4', name: 'Madina Umarova', role: 'Gouvernante Generale (Head Housekeeping)', dept: 'Xona Xizmati & Tozalik', shift: 'Kunduzgi (08:00 - 18:00)', status: 'Navbatchilikda', rating: '4.9 ★', phone: '+998 90 444 55 66' },
-  { id: 'emp-5', name: 'Sardor Maxmudov', role: 'Xavfsizlik Boshlig\'i & Protokol', dept: 'Xavfsizlik & Muhandislik', shift: 'Tungi (18:00 - 08:00)', status: 'Navbatchilikda', rating: '5.0 ★', phone: '+998 90 555 66 77' },
-  { id: 'emp-6', name: 'Yelena Smirnova', role: 'Bosh Spa Terapevt & Balneolog', dept: 'Spa & Salomatlik', shift: 'Kunduzgi (08:00 - 18:00)', status: 'Dam olishda', rating: '4.8 ★', phone: '+998 90 666 77 88' }
+const INITIAL_CLIENTS: ClientUser[] = [
+  { id: 'cl-1', name: 'Lord Alexander Wright', tier: 'Diamond VIP', room: 'Suite 701 (Presidential)', spentUSD: 14200, phone: '+44 7911 123456', email: 'alexander@wright.co.uk', checkIn: '2026-08-22', checkOut: '2026-08-29', status: 'Joylashgan' },
+  { id: 'cl-2', name: 'Kenji Takahashi', tier: 'Royal Platinum', room: 'Villa 4 (Ocean Sovereign)', spentUSD: 28500, phone: '+81 90 1234 5678', email: 'kenji@tokyovip.jp', checkIn: '2026-08-20', checkOut: '2026-08-30', status: 'Joylashgan' },
+  { id: 'cl-3', name: 'Elena Rostova', tier: 'Royal Platinum', room: 'Penthouse 802', spentUSD: 19800, phone: '+377 93 12 34 56', email: 'elena@monacovip.mc', checkIn: '2026-08-24', checkOut: '2026-08-31', status: 'Joylashgan' },
+  { id: 'cl-4', name: 'Sheikh Mansoor Al-Nahyan', tier: 'Diamond VIP', room: 'Royal Penthouse 901', spentUSD: 65000, phone: '+971 50 123 4567', email: 'mansoor@emiratesroyal.ae', checkIn: '2026-08-25', checkOut: '2026-09-05', status: 'Kutilmoqda' },
+  { id: 'cl-5', name: 'Princess Charlotte De Bourbon', tier: 'Diamond VIP', room: 'Emerald Estate Villa', spentUSD: 48000, phone: '+33 6 12 34 56 78', email: 'charlotte@parisroyal.fr', checkIn: '2026-08-26', checkOut: '2026-09-02', status: 'Kutilmoqda' },
+  { id: 'cl-6', name: 'Sardor Qosimov', tier: 'Gold Elite', room: 'Suite 504 (Deluxe Ocean)', spentUSD: 3600, phone: '+998 90 777 00 11', email: 'sardor@tashkent.uz', checkIn: '2026-08-23', checkOut: '2026-08-26', status: 'Joylashgan' }
+];
+
+const INITIAL_ADMINS: AdminUser[] = [
+  { id: 'adm-1', name: 'Jasur Karimov', role: 'Bosh Menejer', email: 'gm@royalgrandpalace.com', access: 'Super Admin', lastActive: 'Hozir faol' },
+  { id: 'adm-2', name: 'Madina Umarova', role: 'VIP Concierge Lead', email: 'concierge@royalgrandpalace.com', access: 'Menejer', lastActive: '5 daq oldin' },
+  { id: 'adm-3', name: 'Alain Ducasse', role: 'Oshxona Boshlig\'i', email: 'chef@royalgrandpalace.com', access: 'Menejer', lastActive: '12 daq oldin' },
+  { id: 'adm-4', name: 'Sardor Maxmudov', role: 'Tizim Administratori', email: 'admin@royalgrandpalace.com', access: 'Super Admin', lastActive: 'Hozir faol' }
+];
+
+const INITIAL_CHAT_MSGS: ChatMessage[] = [
+  { id: 'm-1', sender: 'client', senderName: 'Lord Alexander (Suite 701)', text: 'Assalomu alaykum! Xonamizga soat 20:00 da Dom Pérignon va Beluga ikra yetkazib bera olasizmi?', time: '18:40', isRead: true },
+  { id: 'm-2', sender: 'admin', senderName: 'VIP Concierge (Madina)', text: 'Hurmatli Lord Alexander, buyurtmangiz qabul qilindi! Bosh sommelye taomni aynan 20:00 da shaxsan topshiradi.', time: '18:42', isRead: true },
+  { id: 'm-3', sender: 'client', senderName: 'Lord Alexander (Suite 701)', text: 'Katta rahmat! Ertaga ertalab soat 09:00 ga aeroportga Rolls-Royce Phantom tayyor bo\'lsin iltimos.', time: '18:45', isRead: false }
 ];
 
 export default function App() {
+  // Current Mode: 'client' (Mehmon) vs 'admin' (Boshqaruv/Admin CRM)
+  const [activePortal, setActivePortal] = useState<'client' | 'admin'>('client');
   const [currency, setCurrency] = useState<'USD' | 'UZS' | 'EUR'>('USD');
   const [lang, setLang] = useState<'uz' | 'en' | 'ru'>('uz');
-  
-  // Data States
-  const [rooms] = useState<Room[]>(INITIAL_ROOMS);
-  const [fleet] = useState<FleetItem[]>(INITIAL_FLEET);
-  const [menu] = useState<MenuItem[]>(INITIAL_MENU);
-  const [staff, setStaff] = useState<StaffMember[]>(() => {
-    const saved = localStorage.getItem('rgp_staff');
-    return saved ? JSON.parse(saved) : INITIAL_STAFF;
+
+  // Datasets
+  const [rooms] = useState<Room[]>(EXPANDED_ROOMS);
+  const [fleet] = useState<FleetItem[]>(EXPANDED_FLEET);
+  const [menu] = useState<MenuItem[]>(EXPANDED_MENU);
+  const [clients, setClients] = useState<ClientUser[]>(() => {
+    const saved = localStorage.getItem('rgp_clients');
+    return saved ? JSON.parse(saved) : INITIAL_CLIENTS;
   });
+  const [admins, setAdmins] = useState<AdminUser[]>(() => {
+    const saved = localStorage.getItem('rgp_admins');
+    return saved ? JSON.parse(saved) : INITIAL_ADMINS;
+  });
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => {
+    const saved = localStorage.getItem('rgp_chat');
+    return saved ? JSON.parse(saved) : INITIAL_CHAT_MSGS;
+  });
+  const [chatInput, setChatInput] = useState('');
+  const [clientChatOpen, setClientChatOpen] = useState(false);
+
+  // Cart
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('rgp_cart');
     return saved ? JSON.parse(saved) : [];
   });
-  
-  // Activity Feed
-  const [activityFeed, setActivityFeed] = useState<string[]>([
-    'Royal Penthouse Suite uchun yangi VIP rezervatsiya tasdiqlandi',
-    'Rolls-Royce Phantom aeroport VIP terminaliga jo\'natildi',
-    'Oshxonadan Mishelin Wagyu taomiga buyurtma berildi (Suite 504)'
-  ]);
 
-  // Filters & Search
-  const [roomFilter, setRoomFilter] = useState<string>('all');
-  const [menuFilter, setMenuFilter] = useState<string>('all');
-  const [staffDeptFilter, setStaffDeptFilter] = useState<string>('all');
-  const [staffSearch, setStaffSearch] = useState<string>('');
-
-  // Modals
+  // Filters & Modals
+  const [roomFilter, setRoomFilter] = useState('all');
+  const [menuFilter, setMenuFilter] = useState('all');
+  const [clientSearch, setClientSearch] = useState('');
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [voucherModalOpen, setVoucherModalOpen] = useState(false);
   const [voucherData, setVoucherData] = useState<any>(null);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [tableModalOpen, setTableModalOpen] = useState(false);
-  const [addStaffModalOpen, setAddStaffModalOpen] = useState(false);
+  const [addClientModalOpen, setAddClientModalOpen] = useState(false);
+  const [addAdminModalOpen, setAddAdminModalOpen] = useState(false);
 
-  // Booking Form State
-  const [checkIn, setCheckIn] = useState<string>('2026-08-25');
-  const [checkOut, setCheckOut] = useState<string>('2026-08-28');
-  const [guestName, setGuestName] = useState<string>('');
-  const [guestPhone, setGuestPhone] = useState<string>('');
-  const [guestCount, setGuestCount] = useState<string>('2');
+  // Form states
+  const [checkIn, setCheckIn] = useState('2026-08-25');
+  const [checkOut, setCheckOut] = useState('2026-08-28');
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestCount, setGuestCount] = useState('2');
   const [extraTransfer, setExtraTransfer] = useState(false);
   const [extraChampagne, setExtraChampagne] = useState(false);
   const [extraSpa, setExtraSpa] = useState(false);
   const [extraButler, setExtraButler] = useState(false);
 
-  // Chauffeur Form State
-  const [chauffeurCar, setChauffeurCar] = useState<string>('mercedes_maybach');
-  const [chauffeurServiceType, setChauffeurServiceType] = useState<string>('airport_vip');
-  const [chauffeurPickup, setChauffeurPickup] = useState<string>('Royal Grand Palace Asosiy Kirish');
-  const [chauffeurContact, setChauffeurContact] = useState<string>('');
+  // Chauffeur Form
+  const [chauffeurCar, setChauffeurCar] = useState('mercedes_maybach');
+  const [chauffeurServiceType, setChauffeurServiceType] = useState('airport_vip');
+  const [chauffeurPickup, setChauffeurPickup] = useState('Royal Grand Palace Asosiy Kirish');
+  const [chauffeurContact, setChauffeurContact] = useState('');
 
-  // Table Reservation State
-  const [tableName, setTableName] = useState<string>('');
-  const [tableZone, setTableZone] = useState<string>('terrace');
+  // Add Client Form
+  const [newClientName, setNewClientName] = useState('');
+  const [newClientTier, setNewClientTier] = useState<'Diamond VIP' | 'Royal Platinum' | 'Gold Elite'>('Royal Platinum');
+  const [newClientRoom, setNewClientRoom] = useState('Suite 602');
+  const [newClientPhone, setNewClientPhone] = useState('');
+  const [newClientEmail, setNewClientEmail] = useState('');
 
-  // Add Staff State
-  const [newStaffName, setNewStaffName] = useState('');
-  const [newStaffRole, setNewStaffRole] = useState('');
-  const [newStaffDept, setNewStaffDept] = useState('Qabulxona & Konsyerj');
-  const [newStaffShift, setNewStaffShift] = useState('Kunduzgi (08:00 - 18:00)');
-  const [newStaffPhone, setNewStaffPhone] = useState('');
+  // Add Admin Form
+  const [newAdminName, setNewAdminName] = useState('');
+  const [newAdminRole, setNewAdminRole] = useState<'Bosh Menejer' | 'VIP Concierge Lead' | 'Tizim Administratori' | 'Oshxona Boshlig\'i'>('VIP Concierge Lead');
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminAccess, setNewAdminAccess] = useState<'Super Admin' | 'Menejer' | 'Operator'>('Menejer');
 
   // Room delivery
   const [roomNumber, setRoomNumber] = useState('');
+  const [tableName, setTableName] = useState('');
+  const [tableZone, setTableZone] = useState('terrace');
 
-  // Save to local storage
+  // Sync to local storage
   useEffect(() => {
-    localStorage.setItem('rgp_staff', JSON.stringify(staff));
-  }, [staff]);
+    localStorage.setItem('rgp_clients', JSON.stringify(clients));
+  }, [clients]);
+
+  useEffect(() => {
+    localStorage.setItem('rgp_admins', JSON.stringify(admins));
+  }, [admins]);
+
+  useEffect(() => {
+    localStorage.setItem('rgp_chat', JSON.stringify(chatMessages));
+  }, [chatMessages]);
 
   useEffect(() => {
     localStorage.setItem('rgp_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Currency Converter Formatter
+  // Currency Converter
   const formatMoney = (amountUSD: number) => {
     if (currency === 'UZS') return Math.round(amountUSD * 12850).toLocaleString('uz-UZ') + " so'm";
     if (currency === 'EUR') return '€' + Math.round(amountUSD * 0.92).toLocaleString('de-DE');
     return '$' + amountUSD.toLocaleString('en-US');
   };
 
-  const addFeed = (msg: string) => {
-    setActivityFeed(prev => [msg, ...prev.slice(0, 5)]);
+  // Chat message send handler
+  const handleSendMessage = (senderType: 'client' | 'admin') => {
+    if (!chatInput.trim()) return;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const newMsg: ChatMessage = {
+      id: 'msg-' + Date.now(),
+      sender: senderType,
+      senderName: senderType === 'client' ? 'Mehmon (Lord Alexander)' : 'VIP Concierge Boshqaruvi',
+      text: chatInput.trim(),
+      time: timeStr,
+      isRead: false
+    };
+
+    setChatMessages(prev => [...prev, newMsg]);
+    setChatInput('');
+
+    notifications.show({
+      title: 'Xabar yuborildi',
+      message: `${newMsg.senderName}: "${newMsg.text}"`,
+      color: senderType === 'client' ? 'gold' : 'teal'
+    });
   };
 
   // Cart operations
@@ -466,7 +601,6 @@ export default function App() {
     return selectedRoom.priceUSD * nights + extras;
   };
 
-  // Handlers
   const handleRoomBookSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedRoom) return;
@@ -482,10 +616,24 @@ export default function App() {
       totalPrice: formatMoney(calculateBookingTotal())
     };
 
+    // Auto add to clients
+    const newCl: ClientUser = {
+      id: 'cl-' + Date.now(),
+      name: guestName,
+      tier: 'Royal Platinum',
+      room: selectedRoom.title,
+      spentUSD: calculateBookingTotal(),
+      phone: guestPhone,
+      email: 'guest@vip.com',
+      checkIn,
+      checkOut,
+      status: 'Joylashgan'
+    };
+    setClients(prev => [newCl, ...prev]);
+
     setVoucherData(voucher);
     setBookingModalOpen(false);
     setVoucherModalOpen(true);
-    addFeed(`Yangi xona band qilindi: ${guestName} — ${selectedRoom.title} (${voucher.totalPrice})`);
     notifications.show({
       title: 'Bron Tasdiqlandi!',
       message: `Hurmatli ${guestName}, sizning vaucheringiz tayyorlandi.`,
@@ -493,130 +641,83 @@ export default function App() {
     });
   };
 
-  const handleChauffeurSubmit = (e: React.FormEvent) => {
+  const handleAddClientSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    notifications.show({
-      title: 'VIP Haydovchi Buyurtma Qilindi',
-      message: `Xizmat muvaffaqiyatli band qilindi. Haydovchi belgilangan vaqtda yetib boradi.`,
-      color: 'gold'
-    });
-    addFeed(`VIP Transfer chaqiruvi: ${chauffeurContact} (${chauffeurPickup})`);
-    setChauffeurContact('');
-  };
-
-  const handleCheckoutCart = () => {
-    if (cart.length === 0) return;
-    if (!roomNumber.trim()) {
-      notifications.show({
-        title: 'Xona raqami kerak',
-        message: 'Iltimos, yetkazish uchun xona raqamini kiriting',
-        color: 'red'
-      });
-      return;
-    }
-
-    notifications.show({
-      title: 'Oshxona Buyurtmasi Qabul Qilindi',
-      message: `Taomlar 20-30 daqiqada ${roomNumber} ga yetkaziladi!`,
-      color: 'teal'
-    });
-    addFeed(`Xonaga taom buyurtmasi: ${roomNumber} (${formatMoney(cartTotalUSD)})`);
-    setCart([]);
-    setCartDrawerOpen(false);
-    setRoomNumber('');
-  };
-
-  const handleTableSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    notifications.show({
-      title: 'Restoranda Stol Band Qilindi',
-      message: `Hurmatli ${tableName}, stolingiz muvaffaqiyatli band qilindi.`,
-      color: 'teal'
-    });
-    addFeed(`Restoran stoli band qilindi: ${tableName} (${tableZone})`);
-    setTableModalOpen(false);
-    setTableName('');
-  };
-
-  const handleAddStaffSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newMember: StaffMember = {
-      id: 'emp-' + Date.now(),
-      name: newStaffName,
-      role: newStaffRole,
-      dept: newStaffDept,
-      shift: newStaffShift,
-      status: 'Navbatchilikda',
-      rating: '5.0 ★',
-      phone: newStaffPhone
+    const cl: ClientUser = {
+      id: 'cl-' + Date.now(),
+      name: newClientName,
+      tier: newClientTier,
+      room: newClientRoom,
+      spentUSD: 8500,
+      phone: newClientPhone,
+      email: newClientEmail,
+      checkIn: '2026-08-25',
+      checkOut: '2026-09-01',
+      status: 'Joylashgan'
     };
-    setStaff(prev => [newMember, ...prev]);
+    setClients(prev => [cl, ...prev]);
     notifications.show({
-      title: 'Yangi xodim qo\'shildi',
-      message: `${newStaffName} xodimlar ro'yxatiga muvaffaqiyatli qo'shildi`,
+      title: 'Yangi VIP Mijoz Qo\'shildi',
+      message: `${newClientName} bazaga muvaffaqiyatli kiritildi`,
       color: 'gold'
     });
-    addFeed(`Yangi xodim qo'shildi: ${newStaffName} (${newStaffDept})`);
-    setAddStaffModalOpen(false);
-    setNewStaffName('');
-    setNewStaffRole('');
-    setNewStaffPhone('');
+    setAddClientModalOpen(false);
+    setNewClientName('');
+    setNewClientPhone('');
+    setNewClientEmail('');
   };
 
-  const toggleStaffStatus = (id: string) => {
-    setStaff(prev =>
-      prev.map(s => {
-        if (s.id === id) {
-          const nextStatus = s.status === 'Navbatchilikda' ? 'Dam olishda' : (s.status === 'Dam olishda' ? 'Tanaffusda' : 'Navbatchilikda');
-          addFeed(`Xodim holati: ${s.name} (${nextStatus})`);
-          return { ...s, status: nextStatus };
-        }
-        return s;
-      })
-    );
-  };
-
-  const deleteStaff = (id: string) => {
-    setStaff(prev => prev.filter(s => s.id !== id));
+  const handleAddAdminSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const adm: AdminUser = {
+      id: 'adm-' + Date.now(),
+      name: newAdminName,
+      role: newAdminRole,
+      email: newAdminEmail,
+      access: newAdminAccess,
+      lastActive: 'Hozir faol'
+    };
+    setAdmins(prev => [adm, ...prev]);
     notifications.show({
-      title: 'O\'chirildi',
-      message: 'Xodim tizimdan o\'chirildi',
-      color: 'red'
+      title: 'Yangi Admin Tayinlandi',
+      message: `${newAdminName} tizimga ${newAdminRole} sifatida qo'shildi`,
+      color: 'teal'
     });
+    setAddAdminModalOpen(false);
+    setNewAdminName('');
+    setNewAdminEmail('');
   };
 
-  // Filtered lists
+  const filteredClients = clients.filter(c =>
+    c.name.toLowerCase().includes(clientSearch.toLowerCase()) ||
+    c.room.toLowerCase().includes(clientSearch.toLowerCase()) ||
+    c.tier.toLowerCase().includes(clientSearch.toLowerCase())
+  );
+
   const filteredRooms = roomFilter === 'all' ? rooms : rooms.filter(r => r.category === roomFilter);
   const filteredMenu = menuFilter === 'all' ? menu : menu.filter(m => m.category === menuFilter);
-  const filteredStaff = staff.filter(s => {
-    const matchDept = staffDeptFilter === 'all' || s.dept === staffDeptFilter;
-    const matchSearch = s.name.toLowerCase().includes(staffSearch.toLowerCase()) || s.role.toLowerCase().includes(staffSearch.toLowerCase());
-    return matchDept && matchSearch;
-  });
-
-  const totalStaffCount = 136 + staff.length;
-  const onDutyCount = 82 + staff.filter(s => s.status === 'Navbatchilikda').length;
 
   return (
-    <Box style={{ position: 'relative', overflowX: 'hidden', background: '#080c14', color: '#f8fafc' }}>
+    <Box style={{ position: 'relative', minHeight: '100vh', background: '#080c14', color: '#f8fafc' }}>
       {/* Background Ambient Glows */}
       <div className="ambient-glow glow-1" />
       <div className="ambient-glow glow-2" />
       <div className="ambient-glow glow-3" />
 
-      {/* HEADER & NAVBAR */}
+      {/* TOP NAVIGATION & PORTAL SWITCHER */}
       <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: 'rgba(8, 12, 20, 0.92)',
+        background: 'rgba(8, 12, 20, 0.95)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(212, 175, 55, 0.3)',
-        padding: '0.9rem 2rem'
+        padding: '0.8rem 1.5rem'
       }}>
         <Container size="xl" px={0}>
           <Group justify="space-between">
-            <Group gap="sm" style={{ cursor: 'pointer' }}>
+            {/* Logo */}
+            <Group gap="sm" style={{ cursor: 'pointer' }} onClick={() => setActivePortal('client')}>
               <Box style={{
                 width: 42,
                 height: 42,
@@ -631,24 +732,36 @@ export default function App() {
                 <IconCrown size={24} />
               </Box>
               <Stack gap={0}>
-                <Text style={{ fontFamily: 'Cinzel, serif', fontWeight: 800, letterSpacing: 2, fontSize: '1.2rem', lineHeight: 1.1 }}>
-                  ROYAL GRAND
+                <Text style={{ fontFamily: 'Cinzel, serif', fontWeight: 800, letterSpacing: 2, fontSize: '1.15rem', lineHeight: 1.1 }}>
+                  ROYAL GRAND PALACE
                 </Text>
-                <Text size="xs" c="gold" fw={700} style={{ letterSpacing: 2 }}>
-                  PALACE & RESORT ★★★★★
+                <Text size="xs" c="gold" fw={700} style={{ letterSpacing: 1.5 }}>
+                  ★★★★★ RESORT & LUXURY SUITES
                 </Text>
               </Stack>
             </Group>
 
-            <Group gap="lg" visibleFrom="md">
-              <Button variant="subtle" c="gray.3" component="a" href="#rooms" leftSection={<IconBed size={16} />}>Xonalar</Button>
-              <Button variant="subtle" c="gray.3" component="a" href="#chauffeur" leftSection={<IconCar size={16} />}>VIP Haydovchi</Button>
-              <Button variant="subtle" c="gray.3" component="a" href="#restaurant" leftSection={<IconToolsKitchen2 size={16} />}>Gurme Oshxona</Button>
-              <Button variant="subtle" c="gray.3" component="a" href="#staff" leftSection={<IconUsers size={16} />}>Xodimlar Nazorati</Button>
-            </Group>
+            {/* Portal Switcher (Client vs Admin) */}
+            <SegmentedControl
+              value={activePortal}
+              onChange={(val: any) => {
+                setActivePortal(val);
+                notifications.show({
+                  title: val === 'admin' ? '🛡️ Admin & CRM Boshqaruv Markazi' : '👑 VIP Mehmon Portali',
+                  message: `Rejim almashtirildi: ${val === 'admin' ? 'Boshqaruv Paneli' : 'Mehmon Ko\'rinishi'}`,
+                  color: val === 'admin' ? 'blue' : 'gold'
+                });
+              }}
+              data={[
+                { label: '👑 VIP Mehmon Portali', value: 'client' },
+                { label: '🛡️ Admin & CRM Markazi', value: 'admin' }
+              ]}
+              color={activePortal === 'admin' ? 'blue' : 'gold'}
+              radius="md"
+            />
 
+            {/* Global Actions */}
             <Group gap="sm">
-              {/* Language Menu */}
               <Menu shadow="md" width={140}>
                 <Menu.Target>
                   <Button variant="default" size="xs" leftSection={<IconGlobe size={14} />}>
@@ -662,7 +775,6 @@ export default function App() {
                 </Menu.Dropdown>
               </Menu>
 
-              {/* Currency Menu */}
               <Menu shadow="md" width={130}>
                 <Menu.Target>
                   <Button variant="default" size="xs">
@@ -676,726 +788,755 @@ export default function App() {
                 </Menu.Dropdown>
               </Menu>
 
-              {/* Cart Button */}
-              <ActionIcon
-                variant="filled"
-                color="dark"
-                size="lg"
-                onClick={() => setCartDrawerOpen(true)}
-                style={{ border: '1px solid rgba(212, 175, 55, 0.4)', position: 'relative' }}
-              >
-                <IconShoppingBag size={20} color="#d4af37" />
-                {cart.length > 0 && (
-                  <Badge size="xs" circle color="red" style={{ position: 'absolute', top: -5, right: -5 }}>
-                    {cart.reduce((s, i) => s + i.quantity, 0)}
-                  </Badge>
-                )}
-              </ActionIcon>
+              {activePortal === 'client' && (
+                <ActionIcon
+                  variant="filled"
+                  color="dark"
+                  size="lg"
+                  onClick={() => setCartDrawerOpen(true)}
+                  style={{ border: '1px solid rgba(212, 175, 55, 0.4)', position: 'relative' }}
+                >
+                  <IconShoppingBag size={20} color="#d4af37" />
+                  {cart.length > 0 && (
+                    <Badge size="xs" circle color="red" style={{ position: 'absolute', top: -5, right: -5 }}>
+                      {cart.reduce((s, i) => s + i.quantity, 0)}
+                    </Badge>
+                  )}
+                </ActionIcon>
+              )}
 
               <Button
                 className="btn-gold"
+                size="xs"
                 leftSection={<IconSparkles size={16} />}
                 onClick={() => {
-                  setSelectedRoom(rooms[2]);
+                  setSelectedRoom(rooms[0]);
                   setBookingModalOpen(true);
                 }}
               >
-                Joy Band Qilish
+                Xona Band Qilish
               </Button>
             </Group>
           </Group>
         </Container>
       </header>
 
-      {/* HERO SECTION */}
-      <Box className="hero-section">
-        <Container size="lg" style={{ position: 'relative', zIndex: 2 }}>
-          <Badge
-            size="lg"
-            variant="outline"
-            color="gold"
-            leftSection={<IconCrown size={14} />}
-            mb="lg"
-            style={{ letterSpacing: 2, padding: '0.6rem 1.4rem' }}
-          >
-            5-YULDUZLI QIROLLIK HASHAMATI
-          </Badge>
-
-          <Title style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4.4rem)', lineHeight: 1.15, textShadow: '0 4px 30px rgba(0,0,0,0.9)' }} mb="md">
-            ORZUYINGIZDAGI <span className="gold-gradient-text">ENG HASHAMATLI</span> MEHMONXONA
-          </Title>
-
-          <Text size="lg" c="gray.3" maw={820} mx="auto" mb="xl">
-            Royal Grand Palace — har bir lahzasi mo'jiza, beqiyos qulaylik, shaxsiy Rolls-Royce haydovchi xizmati va Mishelin darajasidagi gurme oshxona bilan unutilmas tajriba taqdim etadi.
-          </Text>
-
-          <Group justify="center" gap="md" mb="xl">
-            <Button size="lg" className="btn-gold" component="a" href="#rooms" leftSection={<IconBed size={20} />}>
-              Xonalarni Ko'rish
-            </Button>
-            <Button size="lg" className="btn-outline-gold" component="a" href="#chauffeur" leftSection={<IconCar size={20} />}>
-              VIP Haydovchi Chaqirish
-            </Button>
-            <Button size="lg" variant="default" component="a" href="#staff" leftSection={<IconUsers size={20} />}>
-              Xodimlar Paneli
-            </Button>
-          </Group>
-
-          {/* Quick Search Widget */}
-          <Paper className="hero-search-box">
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 5 }} spacing="md">
-              <TextInput
-                label="Kelish Sanasi"
-                type="date"
-                value={checkIn}
-                onChange={e => setCheckIn(e.target.value)}
-                leftSection={<IconCalendar size={16} />}
-              />
-              <TextInput
-                label="Ketish Sanasi"
-                type="date"
-                value={checkOut}
-                onChange={e => setCheckOut(e.target.value)}
-                leftSection={<IconCalendar size={16} />}
-              />
-              <Select
-                label="Xona Toifasi"
-                value={roomFilter}
-                onChange={v => setRoomFilter(v || 'all')}
-                data={[
-                  { value: 'all', label: 'Barcha Xonalar' },
-                  { value: 'deluxe', label: 'Deluxe Suites' },
-                  { value: 'presidential', label: 'Presidential Suites' },
-                  { value: 'royal', label: 'Royal Penthouse' },
-                  { value: 'villa', label: 'Private Villas' }
-                ]}
-              />
-              <Select
-                label="Mehmonlar"
-                value={guestCount}
-                onChange={v => setGuestCount(v || '2')}
-                data={[
-                  { value: '1', label: '1 Mehmon' },
-                  { value: '2', label: '2 Mehmon' },
-                  { value: '4', label: '4+ Mehmon' }
-                ]}
-              />
-              <Button
-                className="btn-gold"
-                style={{ height: 'auto', alignSelf: 'flex-end', padding: '0.85rem' }}
-                leftSection={<IconSearch size={18} />}
-                onClick={() => {
-                  const el = document.getElementById('rooms');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
+      {/* =========================================================================
+          VIEW A: VIP MEHMON PORTALI (CLIENT EXPERIENCE)
+          ========================================================================= */}
+      {activePortal === 'client' && (
+        <Box>
+          {/* HERO SECTION */}
+          <Box className="hero-section">
+            <Container size="lg" style={{ position: 'relative', zIndex: 2 }}>
+              <Badge
+                size="lg"
+                variant="outline"
+                color="gold"
+                leftSection={<IconCrown size={14} />}
+                mb="lg"
+                style={{ letterSpacing: 2, padding: '0.6rem 1.4rem' }}
               >
-                Joy Tekshirish
-              </Button>
-            </SimpleGrid>
-          </Paper>
+                5-YULDUZLI QIROLLIK HASHAMATI
+              </Badge>
 
-          {/* Quick Metrics */}
-          <SimpleGrid cols={{ base: 2, md: 4 }} spacing="lg">
-            <Card className="luxury-card" p="md">
-              <Group gap="md">
-                <Box style={{ color: '#d4af37' }}><IconBed size={32} /></Box>
-                <Stack gap={0} align="flex-start">
-                  <Text fw={800} size="xl" style={{ fontFamily: 'Cinzel, serif' }}>98</Text>
-                  <Text size="xs" c="dimmed">VIP Xona & Villalar</Text>
-                </Stack>
+              <Title style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4.4rem)', lineHeight: 1.15, textShadow: '0 4px 30px rgba(0,0,0,0.9)' }} mb="md">
+                ORZUYINGIZDAGI <span className="gold-gradient-text">ENG HASHAMATLI</span> MEHMONXONA
+              </Title>
+
+              <Text size="lg" c="gray.3" maw={820} mx="auto" mb="xl">
+                Royal Grand Palace — 24/7 shaxsiy Butler va Concierge, Rolls-Royce va Maybach avtoparki hamda 3 ta Mishelin yulduzli gurme oshxona xizmati.
+              </Text>
+
+              <Group justify="center" gap="md" mb="xl">
+                <Button size="lg" className="btn-gold" component="a" href="#rooms" leftSection={<IconBed size={20} />}>
+                  Xonalarni Tanlash
+                </Button>
+                <Button size="lg" className="btn-outline-gold" component="a" href="#chauffeur" leftSection={<IconCar size={20} />}>
+                  VIP Transfer Chaqirish
+                </Button>
+                <Button size="lg" variant="default" onClick={() => setClientChatOpen(true)} leftSection={<IconMessageDots size={20} color="#d4af37" />}>
+                  Shaxsiy Butler bilan Chat
+                </Button>
               </Group>
-            </Card>
-            <Card className="luxury-card" p="md">
-              <Group gap="md">
-                <Box style={{ color: '#d4af37' }}><IconUsers size={32} /></Box>
-                <Stack gap={0} align="flex-start">
-                  <Text fw={800} size="xl" style={{ fontFamily: 'Cinzel, serif' }}>{totalStaffCount}</Text>
-                  <Text size="xs" c="dimmed">Faol Ishchilar Soni</Text>
-                </Stack>
-              </Group>
-            </Card>
-            <Card className="luxury-card" p="md">
-              <Group gap="md">
-                <Box style={{ color: '#d4af37' }}><IconCarSuv size={32} /></Box>
-                <Stack gap={0} align="flex-start">
-                  <Text fw={800} size="xl" style={{ fontFamily: 'Cinzel, serif' }}>18</Text>
-                  <Text size="xs" c="dimmed">Rolls & Maybach Avtoparki</Text>
-                </Stack>
-              </Group>
-            </Card>
-            <Card className="luxury-card" p="md">
-              <Group gap="md">
-                <Box style={{ color: '#d4af37' }}><IconToolsKitchen2 size={32} /></Box>
-                <Stack gap={0} align="flex-start">
-                  <Text fw={800} size="xl" style={{ fontFamily: 'Cinzel, serif' }}>3</Text>
-                  <Text size="xs" c="dimmed">Mishelin Restoranlari</Text>
-                </Stack>
-              </Group>
-            </Card>
-          </SimpleGrid>
-        </Container>
-      </Box>
 
-      {/* SECTION 1: ROOMS & SUITES */}
-      <Box className="section-container" id="rooms">
-        <Container size="xl">
-          <Stack align="center" ta="center" mb="xl">
-            <span className="section-tag">HASHAMAT VA QULAYLIK</span>
-            <h2 className="section-title">Qirollik Xonalari va Shaxsiy Villalar</h2>
-            <Text className="section-desc">
-              Har bir xona shaxsiy did, zamonaviy Smart-Home tizimi, to'liq panelli dengiz manzarasi va 24/7 shaxsiy Butler xizmati bilan jihozlangan.
-            </Text>
-
-            <Tabs value={roomFilter} onChange={v => setRoomFilter(v || 'all')} mt="md">
-              <Tabs.List>
-                <Tabs.Tab value="all">Barchasi ({rooms.length})</Tabs.Tab>
-                <Tabs.Tab value="deluxe">Deluxe Suites</Tabs.Tab>
-                <Tabs.Tab value="presidential">Presidential Suites</Tabs.Tab>
-                <Tabs.Tab value="royal">Royal Penthouse</Tabs.Tab>
-                <Tabs.Tab value="villa">Private Villas</Tabs.Tab>
-              </Tabs.List>
-            </Tabs>
-          </Stack>
-
-          <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="xl">
-            {filteredRooms.map(room => (
-              <Card key={room.id} className="luxury-card" padding="lg" radius="lg">
-                <Card.Section style={{ position: 'relative', height: 260, overflow: 'hidden' }}>
-                  <Image src={room.image} alt={room.title} height={260} style={{ transition: 'transform 0.5s ease' }} />
-                  <Badge style={{ position: 'absolute', top: 15, left: 15 }} color="dark" variant="filled">
-                    {room.badge}
-                  </Badge>
-                  <Box style={{
-                    position: 'absolute',
-                    bottom: 15,
-                    right: 15,
-                    background: 'rgba(8, 12, 20, 0.9)',
-                    border: '1px solid rgba(212, 175, 55, 0.5)',
-                    padding: '0.4rem 0.8rem',
-                    borderRadius: 8
-                  }}>
-                    <Text fw={800} c="gold" size="lg" style={{ fontFamily: 'Cinzel, serif', display: 'inline-block' }}>
-                      {formatMoney(room.priceUSD)}
-                    </Text>
-                    <Text size="xs" c="dimmed" span> / kecha</Text>
-                  </Box>
-                </Card.Section>
-
-                <Stack mt="md" gap="xs">
-                  <Title order={3} size="h4">{room.title}</Title>
-                  <Text size="sm" c="dimmed" lineClamp={2}>{room.desc}</Text>
-
-                  <Group gap="md" py="xs" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                    <Text size="xs" c="gray.4">{room.sqm} m²</Text>
-                    <Text size="xs" c="gray.4">• {room.guests}</Text>
-                    <Text size="xs" c="gray.4">• {room.bed}</Text>
-                  </Group>
-
-                  <Group gap={6} my="xs">
-                    {room.amenities.map((a, i) => (
-                      <Badge key={i} size="sm" variant="dot" color="gold">{a}</Badge>
-                    ))}
-                  </Group>
-
+              {/* Quick Search Widget */}
+              <Paper className="hero-search-box">
+                <SimpleGrid cols={{ base: 1, sm: 2, md: 5 }} spacing="md">
+                  <TextInput label="Kelish Sanasi" type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} leftSection={<IconCalendar size={16} />} />
+                  <TextInput label="Ketish Sanasi" type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} leftSection={<IconCalendar size={16} />} />
+                  <Select
+                    label="Xona Toifasi"
+                    value={roomFilter}
+                    onChange={v => setRoomFilter(v || 'all')}
+                    data={[
+                      { value: 'all', label: 'Barcha Xonalar' },
+                      { value: 'deluxe', label: 'Deluxe Suites' },
+                      { value: 'presidential', label: 'Presidential Suites' },
+                      { value: 'royal', label: 'Royal Penthouse' },
+                      { value: 'villa', label: 'Private Villas' }
+                    ]}
+                  />
+                  <Select
+                    label="Mehmonlar"
+                    value={guestCount}
+                    onChange={v => setGuestCount(v || '2')}
+                    data={[{ value: '1', label: '1 Mehmon' }, { value: '2', label: '2 Mehmon' }, { value: '4', label: '4+ Mehmon' }]}
+                  />
                   <Button
-                    fullWidth
                     className="btn-gold"
-                    mt="sm"
-                    leftSection={<IconCheck size={16} />}
+                    style={{ height: 'auto', alignSelf: 'flex-end', padding: '0.85rem' }}
+                    leftSection={<IconSearch size={18} />}
                     onClick={() => {
-                      setSelectedRoom(room);
-                      setBookingModalOpen(true);
+                      document.getElementById('rooms')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                   >
-                    Joy Band Qilish
+                    Joy Tekshirish
                   </Button>
-                </Stack>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
+                </SimpleGrid>
+              </Paper>
+            </Container>
+          </Box>
 
-      {/* SECTION 2: VIP CHAUFFEUR & FLEET */}
-      <Box className="section-container" id="chauffeur" style={{ background: 'rgba(15, 22, 38, 0.4)' }}>
-        <Container size="xl">
-          <Stack mb="xl">
-            <span className="section-tag">PREMIUM TRANSFER</span>
-            <h2 className="section-title">VIP Haydovchi va Hashamatli Avtopark</h2>
-            <Text className="section-desc">
-              Aeroportdan kutib olish, maxsus xizmat safari yoki shahar bo'ylab shaxsiy Rolls-Royce, Mercedes-Maybach va Bentley bilan qirollarga xos transfer.
-            </Text>
-          </Stack>
+          {/* ROOMS CATALOG */}
+          <Box className="section-container" id="rooms">
+            <Container size="xl">
+              <Stack align="center" ta="center" mb="xl">
+                <span className="section-tag">HASHAMAT VA QULAYLIK</span>
+                <h2 className="section-title">Qirollik Xonalari va Shaxsiy Villalar ({rooms.length})</h2>
+                <Text className="section-desc">
+                  Har bir xona shaxsiy did, zamonaviy Smart-Home tizimi, to'liq panelli dengiz manzarasi va 24/7 shaxsiy Butler xizmati bilan jihozlangan.
+                </Text>
 
-          <Grid>
-            <Grid.Col span={{ base: 12, lg: 7 }}>
-              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-                {fleet.map(car => (
-                  <Card key={car.id} className="luxury-card" padding="md">
-                    <Card.Section style={{ position: 'relative', height: 170 }}>
-                      <Image src={car.image} height={170} alt={car.name} />
-                      <Badge style={{ position: 'absolute', top: 10, right: 10 }} color="gold" variant="filled">
-                        {formatMoney(car.priceUSD)} / kun
+                <Tabs value={roomFilter} onChange={v => setRoomFilter(v || 'all')} mt="md">
+                  <Tabs.List>
+                    <Tabs.Tab value="all">Barchasi ({rooms.length})</Tabs.Tab>
+                    <Tabs.Tab value="deluxe">Deluxe Suites</Tabs.Tab>
+                    <Tabs.Tab value="presidential">Presidential Suites</Tabs.Tab>
+                    <Tabs.Tab value="royal">Royal Penthouse</Tabs.Tab>
+                    <Tabs.Tab value="villa">Private Villas</Tabs.Tab>
+                  </Tabs.List>
+                </Tabs>
+              </Stack>
+
+              <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="xl">
+                {filteredRooms.map(room => (
+                  <Card key={room.id} className="luxury-card" padding="lg" radius="lg">
+                    <Card.Section style={{ position: 'relative', height: 250, overflow: 'hidden' }}>
+                      <Image src={room.image} alt={room.title} height={250} style={{ transition: 'transform 0.5s ease' }} />
+                      <Badge style={{ position: 'absolute', top: 15, left: 15 }} color="dark" variant="filled">
+                        {room.badge}
                       </Badge>
+                      <Box style={{
+                        position: 'absolute',
+                        bottom: 15,
+                        right: 15,
+                        background: 'rgba(8, 12, 20, 0.9)',
+                        border: '1px solid rgba(212, 175, 55, 0.5)',
+                        padding: '0.4rem 0.8rem',
+                        borderRadius: 8
+                      }}>
+                        <Text fw={800} c="gold" size="lg" style={{ fontFamily: 'Cinzel, serif', display: 'inline-block' }}>
+                          {formatMoney(room.priceUSD)}
+                        </Text>
+                        <Text size="xs" c="dimmed" span> / kecha</Text>
+                      </Box>
                     </Card.Section>
-                    <Stack gap="xs" mt="sm">
-                      <Title order={4} size="h5">{car.name}</Title>
-                      <Group gap="sm" c="dimmed">
-                        <Text size="xs">{car.seats}</Text>
-                        <Text size="xs">• {car.speed}</Text>
+
+                    <Stack mt="md" gap="xs">
+                      <Title order={3} size="h4">{room.title}</Title>
+                      <Text size="sm" c="dimmed" lineClamp={2}>{room.desc}</Text>
+                      <Group gap="md" py="xs" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                        <Text size="xs" c="gray.4">{room.sqm} m²</Text>
+                        <Text size="xs" c="gray.4">• {room.guests}</Text>
+                        <Text size="xs" c="gray.4">• {room.bed}</Text>
+                      </Group>
+                      <Group gap={6} my="xs">
+                        {room.amenities.map((a, i) => (
+                          <Badge key={i} size="sm" variant="dot" color="gold">{a}</Badge>
+                        ))}
                       </Group>
                       <Button
-                        size="xs"
-                        variant="outline"
-                        color="gold"
+                        fullWidth
+                        className="btn-gold"
+                        mt="sm"
+                        leftSection={<IconCheck size={16} />}
                         onClick={() => {
-                          setChauffeurCar(car.id);
-                          notifications.show({ title: 'Avtomobil tanlandi', message: car.name, color: 'gold' });
+                          setSelectedRoom(room);
+                          setBookingModalOpen(true);
                         }}
                       >
-                        Tanlash
+                        Joy Band Qilish
                       </Button>
                     </Stack>
                   </Card>
                 ))}
               </SimpleGrid>
-            </Grid.Col>
+            </Container>
+          </Box>
 
-            <Grid.Col span={{ base: 12, lg: 5 }}>
-              <Paper className="luxury-card" p="xl" style={{ border: '1px solid rgba(212, 175, 55, 0.4)' }}>
-                <Group gap="md" mb="lg">
-                  <Box style={{
-                    width: 48,
-                    height: 48,
-                    background: 'var(--gold-gradient)',
-                    borderRadius: 12,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#0b0f19'
-                  }}>
-                    <IconCar size={26} />
-                  </Box>
-                  <Stack gap={0}>
-                    <Title order={3} size="h4">VIP Haydovchi Buyurtma Qilish</Title>
-                    <Text size="xs" c="dimmed">24/7 tayyor litsenziyali haydovchilar</Text>
-                  </Stack>
-                </Group>
-
-                <form onSubmit={handleChauffeurSubmit}>
-                  <Stack gap="md">
-                    <Select
-                      label="Avtomobilni Tanlang"
-                      value={chauffeurCar}
-                      onChange={v => setChauffeurCar(v || 'mercedes_maybach')}
-                      data={fleet.map(f => ({ value: f.id, label: `${f.name} (${formatMoney(f.priceUSD)}/kun)` }))}
-                    />
-
-                    <Select
-                      label="Xizmat Turi"
-                      value={chauffeurServiceType}
-                      onChange={v => setChauffeurServiceType(v || 'airport_vip')}
-                      data={[
-                        { value: 'airport_vip', label: 'VIP Aeroport Transferi' },
-                        { value: 'hourly_city', label: 'Shahar bo\'ylab soatbay (4+ soat)' },
-                        { value: 'full_day', label: 'To\'liq kunlik xizmat (24 soat)' },
-                        { value: 'intercity', label: 'Shaharlararo VIP sayohat' }
-                      ]}
-                    />
-
-                    <TextInput
-                      label="Olish Manzili"
-                      value={chauffeurPickup}
-                      onChange={e => setChauffeurPickup(e.target.value)}
-                      placeholder="Aeroport VIP terminali yoki Mehmonxona kirishi"
-                      required
-                    />
-
-                    <TextInput
-                      label="Aloqa Telefoni & Mehmon Ismi"
-                      value={chauffeurContact}
-                      onChange={e => setChauffeurContact(e.target.value)}
-                      placeholder="+998 90 123 45 67 (Alisher Qodirov)"
-                      required
-                    />
-
-                    <Group justify="space-between" p="sm" style={{ background: 'rgba(8,12,20,0.8)', borderRadius: 8 }}>
-                      <Text size="sm" c="dimmed">Taxminiy Narx:</Text>
-                      <Text fw={800} c="gold" size="lg" style={{ fontFamily: 'Cinzel, serif' }}>
-                        {formatMoney(320)}
-                      </Text>
-                    </Group>
-
-                    <Button type="submit" fullWidth className="btn-gold" size="md">
-                      VIP Haydovchini Tasdiqlash
-                    </Button>
-                  </Stack>
-                </form>
-              </Paper>
-            </Grid.Col>
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* SECTION 3: FINE DINING & RESTAURANT */}
-      <Box className="section-container" id="restaurant">
-        <Container size="xl">
-          <Stack align="center" ta="center" mb="xl">
-            <span className="section-tag">GURME OSHXONA & RESTORAN</span>
-            <h2 className="section-title">Mishelin Yulduzli Taomlar va Xona Xizmati</h2>
-            <Text className="section-desc">
-              Dunyoning eng mashhur bosh oshpazlaridan noyob taomlar, 24 soatlik xonaga yetkazish xizmati va restoranda elita stollarni band qilish imkoniyati.
-            </Text>
-
-            <Group justify="space-between" w="100%" p="md" style={{ background: 'rgba(18,27,46,0.6)', borderRadius: 14 }}>
-              <Group gap="xl">
-                <Text size="sm"><IconClock size={16} /> Yetkazish: 20-30 daqiqa</Text>
-                <Text size="sm"><IconStar size={16} /> 3 Mishelin Yulduzli Oshpazlar</Text>
-                <Text size="sm"><IconSparkles size={16} /> 24/7 Xonaga Xizmat</Text>
-              </Group>
-              <Button variant="outline" color="gold" onClick={() => setTableModalOpen(true)}>
-                Restoranda Stol Band Qilish
-              </Button>
-            </Group>
-
-            <Tabs value={menuFilter} onChange={v => setMenuFilter(v || 'all')} mt="md">
-              <Tabs.List>
-                <Tabs.Tab value="all">Barcha Menyu</Tabs.Tab>
-                <Tabs.Tab value="mains">Asosiy Taomlar & Steyk</Tabs.Tab>
-                <Tabs.Tab value="seafood">Dengiz Mahsulotlari & Ikra</Tabs.Tab>
-                <Tabs.Tab value="breakfast">Qirollik Nonushtasi</Tabs.Tab>
-                <Tabs.Tab value="desserts">24K Shirinliklar</Tabs.Tab>
-                <Tabs.Tab value="drinks">Vintage Shampanlar</Tabs.Tab>
-              </Tabs.List>
-            </Tabs>
-          </Stack>
-
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-            {filteredMenu.map(dish => (
-              <Card key={dish.id} className="luxury-card" padding="md">
-                <Card.Section style={{ position: 'relative', height: 200 }}>
-                  <Image src={dish.image} height={200} alt={dish.title} />
-                  <Badge style={{ position: 'absolute', top: 12, left: 12 }} color="gold" variant="filled">
-                    {dish.badge}
-                  </Badge>
-                </Card.Section>
-                <Stack mt="sm" gap="xs">
-                  <Group justify="space-between">
-                    <Title order={4} size="h5">{dish.title}</Title>
-                    <Text fw={800} c="gold" size="lg" style={{ fontFamily: 'Cinzel, serif' }}>
-                      {formatMoney(dish.priceUSD)}
-                    </Text>
-                  </Group>
-                  <Text size="xs" c="dimmed" lineClamp={2}>{dish.desc}</Text>
-                  <Group justify="space-between" mt="sm">
-                    <Text size="xs" c="dimmed"><IconClock size={14} /> {dish.prepTime}</Text>
-                    <Button size="xs" className="btn-gold" onClick={() => addToCart(dish)}>
-                      Savatga Qo'shish
-                    </Button>
-                  </Group>
-                </Stack>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
-
-      {/* SECTION 4: HOTEL SERVICES */}
-      <Box className="section-container" style={{ background: 'rgba(15, 22, 38, 0.5)' }}>
-        <Container size="xl">
-          <Stack align="center" ta="center" mb="xl">
-            <span className="section-tag">EKSKLYUZIV XIZMATLAR</span>
-            <h2 className="section-title">Qirollarga Xos Mehmonxona Xizmatlari</h2>
-            <Text className="section-desc">Sizning rohatlanishingiz va har qanday talabingiz uchun 24 soatlik xizmatlar majmuasi.</Text>
-          </Stack>
-
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl">
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconSparkles size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">Royal Spa & Wellness Oasis</Title>
-              <Text size="sm" c="dimmed" mb="md">Himalay tuzli saunalar, oltin niqobli yoshartirish muolajalari va xususiy basseyn.</Text>
-              <Badge color="gold" variant="outline">24/7 Ochiq</Badge>
-            </Card>
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconHelicopter size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">Shaxsiy Helipad Transfer</Title>
-              <Text size="sm" c="dimmed" mb="md">Mehmonxona tomidagi vertolyot maydonchasi orqali aeroportdan 7 daqiqada yetib kelish.</Text>
-              <Badge color="gold" variant="outline">VIP Xizmat</Badge>
-            </Card>
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconSailboat size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">Royal Yacht Charter</Title>
-              <Text size="sm" c="dimmed" mb="md">Shaxsiy super-yaxtada quyosh botishini tomosha qilish va dengiz sayohati.</Text>
-              <Badge color="gold" variant="outline">Eksklyuziv</Badge>
-            </Card>
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconShieldCheck size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">24/7 Shaxsiy Butler & Konsyerj</Title>
-              <Text size="sm" c="dimmed" mb="md">Har bir lyuks xona uchun tayinlangan shaxsiy yordamchi va individual protokol xizmati.</Text>
-              <Badge color="gold" variant="outline">Individual</Badge>
-            </Card>
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconBuildingSkyscraper size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">Grand Ballroom & Banket</Title>
-              <Text size="sm" c="dimmed" mb="md">500 kishilik qirollik to'y zali va xalqaro biznes sammitlar uchun zallar.</Text>
-              <Badge color="gold" variant="outline">Bron Qilish</Badge>
-            </Card>
-            <Card className="luxury-card" p="xl">
-              <Box mb="md" c="gold"><IconCrown size={36} /></Box>
-              <Title order={3} size="h4" mb="xs">Shaxsiy Sommelier & Degustatsiya</Title>
-              <Text size="sm" c="dimmed" mb="md">Fransiya va Italiyaning eng sara kolleksiyali sharoblari va eksklyuziv degustatsiya.</Text>
-              <Badge color="gold" variant="outline">Mishelin Ta'mi</Badge>
-            </Card>
-          </SimpleGrid>
-        </Container>
-      </Box>
-
-      {/* SECTION 5: STAFF & OPERATIONS DASHBOARD */}
-      <Box className="section-container" id="staff">
-        <Container size="xl">
-          <Paper className="luxury-card" p="xl" style={{ border: '1px solid rgba(212, 175, 55, 0.5)' }}>
-            <Group justify="space-between" mb="xl" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.5rem' }}>
-              <Stack gap="xs">
-                <Badge color="blue" size="lg" leftSection={<IconShieldCheck size={14} />}>
-                  MEHMONXONA BOSHQARUV MARKAZI
-                </Badge>
-                <Title order={2} style={{ fontFamily: 'Cinzel, serif' }}>
-                  Ishchilar Soni & Xodimlar Nazorati
-                </Title>
-                <Text size="sm" c="dimmed">
-                  Mehmonxonadagi barcha {totalStaffCount} nafar xodimlar, smenalar, bo'limlar va vazifalar monitoringi.
+          {/* CHAUFFEUR FLEET */}
+          <Box className="section-container" id="chauffeur" style={{ background: 'rgba(15, 22, 38, 0.4)' }}>
+            <Container size="xl">
+              <Stack mb="xl">
+                <span className="section-tag">PREMIUM TRANSFER</span>
+                <h2 className="section-title">VIP Haydovchi va Hashamatli Avtopark ({fleet.length})</h2>
+                <Text className="section-desc">
+                  Aeroportdan VIP kutib olish, maxsus xizmat safari yoki shahar bo'ylab shaxsiy Rolls-Royce, Maybach va Bentley bilan qirollarga xos transfer.
                 </Text>
               </Stack>
+
+              <Grid>
+                <Grid.Col span={{ base: 12, lg: 7 }}>
+                  <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
+                    {fleet.map(car => (
+                      <Card key={car.id} className="luxury-card" padding="sm">
+                        <Card.Section style={{ position: 'relative', height: 140 }}>
+                          <Image src={car.image} height={140} alt={car.name} />
+                          <Badge style={{ position: 'absolute', top: 8, right: 8 }} color="gold" variant="filled" size="xs">
+                            {formatMoney(car.priceUSD)}/kun
+                          </Badge>
+                        </Card.Section>
+                        <Stack gap={4} mt="xs">
+                          <Title order={5} size="xs" lineClamp={1}>{car.name}</Title>
+                          <Text size="xs" c="dimmed">{car.seats} • {car.speed}</Text>
+                          <Button
+                            size="compact-xs"
+                            variant="outline"
+                            color="gold"
+                            onClick={() => {
+                              setChauffeurCar(car.id);
+                              notifications.show({ title: 'Avtomobil tanlandi', message: car.name, color: 'gold' });
+                            }}
+                          >
+                            Tanlash
+                          </Button>
+                        </Stack>
+                      </Card>
+                    ))}
+                  </SimpleGrid>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, lg: 5 }}>
+                  <Paper className="luxury-card" p="xl" style={{ border: '1px solid rgba(212, 175, 55, 0.4)' }}>
+                    <Group gap="md" mb="lg">
+                      <Box style={{ width: 44, height: 44, background: 'var(--gold-gradient)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0b0f19' }}>
+                        <IconCar size={24} />
+                      </Box>
+                      <Stack gap={0}>
+                        <Title order={3} size="h4">VIP Haydovchi Chaqirish</Title>
+                        <Text size="xs" c="dimmed">24/7 tayyor diplomatik haydovchilar</Text>
+                      </Stack>
+                    </Group>
+
+                    <Stack gap="sm">
+                      <Select
+                        label="Avtomobilni Tanlang"
+                        value={chauffeurCar}
+                        onChange={v => setChauffeurCar(v || 'mercedes_maybach')}
+                        data={fleet.map(f => ({ value: f.id, label: `${f.name} (${formatMoney(f.priceUSD)}/kun)` }))}
+                      />
+                      <Select
+                        label="Xizmat Turi"
+                        value={chauffeurServiceType}
+                        onChange={v => setChauffeurServiceType(v || 'airport_vip')}
+                        data={[
+                          { value: 'airport_vip', label: 'VIP Aeroport Transferi' },
+                          { value: 'hourly_city', label: 'Shahar bo\'ylab soatbay (4+ soat)' },
+                          { value: 'full_day', label: 'To\'liq kunlik xizmat (24 soat)' },
+                          { value: 'intercity', label: 'Shaharlararo VIP sayohat' }
+                        ]}
+                      />
+                      <TextInput label="Olish Manzili" value={chauffeurPickup} onChange={e => setChauffeurPickup(e.target.value)} required />
+                      <TextInput label="Telefon & Ism" value={chauffeurContact} onChange={e => setChauffeurContact(e.target.value)} placeholder="+998 90 123 45 67 (Alisher Qodirov)" required />
+                      <Button
+                        className="btn-gold"
+                        size="md"
+                        onClick={() => {
+                          notifications.show({ title: 'VIP Transfer Tasdiqlandi', message: 'Haydovchi belgilangan vaqtda yetib boradi.', color: 'gold' });
+                          setChauffeurContact('');
+                        }}
+                      >
+                        Haydovchini Band Qilish
+                      </Button>
+                    </Stack>
+                  </Paper>
+                </Grid.Col>
+              </Grid>
+            </Container>
+          </Box>
+
+          {/* GOURMET RESTAURANT */}
+          <Box className="section-container" id="restaurant">
+            <Container size="xl">
+              <Stack align="center" ta="center" mb="xl">
+                <span className="section-tag">GURME OSHXONA & RESTORAN</span>
+                <h2 className="section-title">Mishelin Yulduzli Gurme Menyu ({menu.length})</h2>
+                <Text className="section-desc">24 soatlik xonaga yetkazish xizmati va restoranda stol band qilish imkoniyati.</Text>
+
+                <Group justify="space-between" w="100%" p="md" style={{ background: 'rgba(18,27,46,0.6)', borderRadius: 14 }}>
+                  <Group gap="xl">
+                    <Text size="sm"><IconClock size={16} /> Yetkazish: 20-30 daqiqa</Text>
+                    <Text size="sm"><IconStar size={16} /> 3 Mishelin Oshpazlar</Text>
+                  </Group>
+                  <Button variant="outline" color="gold" onClick={() => setTableModalOpen(true)}>
+                    Restoranda Stol Band Qilish
+                  </Button>
+                </Group>
+
+                <Tabs value={menuFilter} onChange={v => setMenuFilter(v || 'all')} mt="md">
+                  <Tabs.List>
+                    <Tabs.Tab value="all">Barchasi</Tabs.Tab>
+                    <Tabs.Tab value="mains">Asosiy Taomlar & Steyk</Tabs.Tab>
+                    <Tabs.Tab value="seafood">Dengiz Mahsulotlari & Ikra</Tabs.Tab>
+                    <Tabs.Tab value="breakfast">Qirollik Nonushtasi</Tabs.Tab>
+                    <Tabs.Tab value="desserts">24K Shirinliklar</Tabs.Tab>
+                    <Tabs.Tab value="drinks">Vintage Shampanlar</Tabs.Tab>
+                  </Tabs.List>
+                </Tabs>
+              </Stack>
+
+              <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+                {filteredMenu.map(dish => (
+                  <Card key={dish.id} className="luxury-card" padding="sm">
+                    <Card.Section style={{ position: 'relative', height: 180 }}>
+                      <Image src={dish.image} height={180} alt={dish.title} />
+                      <Badge style={{ position: 'absolute', top: 10, left: 10 }} color="gold" variant="filled" size="xs">
+                        {dish.badge}
+                      </Badge>
+                    </Card.Section>
+                    <Stack mt="xs" gap={4}>
+                      <Group justify="space-between">
+                        <Title order={5} size="sm" lineClamp={1}>{dish.title}</Title>
+                        <Text fw={800} c="gold" size="sm">{formatMoney(dish.priceUSD)}</Text>
+                      </Group>
+                      <Text size="xs" c="dimmed" lineClamp={2}>{dish.desc}</Text>
+                      <Button size="xs" className="btn-gold" mt="xs" onClick={() => addToCart(dish)}>
+                        Savatga Qo'shish
+                      </Button>
+                    </Stack>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Container>
+          </Box>
+
+          {/* FLOATING BUTLER CHAT BUTTON (FOR CLIENTS) */}
+          <Box style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}>
+            <Button
+              className="btn-gold"
+              size="lg"
+              radius="xl"
+              leftSection={<IconMessageDots size={22} />}
+              onClick={() => setClientChatOpen(true)}
+              style={{ boxShadow: '0 10px 35px rgba(212, 175, 55, 0.6)' }}
+            >
+              Shaxsiy Butler Chat
+              {chatMessages.filter(m => m.sender === 'admin' && !m.isRead).length > 0 && (
+                <Badge size="xs" circle color="red" ml="xs">
+                  {chatMessages.filter(m => m.sender === 'admin' && !m.isRead).length}
+                </Badge>
+              )}
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {/* =========================================================================
+          VIEW B: ADMIN & CRM BOSHQARUV MARKAZI (ADMIN MANAGEMENT & CRM)
+          ========================================================================= */}
+      {activePortal === 'admin' && (
+        <Box py="xl">
+          <Container size="xl">
+            {/* Top Admin Bar */}
+            <Group justify="space-between" mb="xl" p="lg" style={{ background: 'rgba(18,27,46,0.85)', borderRadius: 16, border: '1px solid rgba(56,189,248,0.3)' }}>
+              <Stack gap={2}>
+                <Group gap="xs">
+                  <Badge color="blue" size="lg" leftSection={<IconShieldCheck size={16} />}>ADMIN & CRM OPERATSIYALAR MARKAZI</Badge>
+                  <Badge color="teal" variant="dot">Jonli Tizim Faol</Badge>
+                </Group>
+                <Title order={2} style={{ fontFamily: 'Cinzel, serif' }}>Mehmonxona boshqaruvi, Mijozlar CRM va Jonli Aloqa</Title>
+              </Stack>
               <Group>
-                <Button className="btn-gold" leftSection={<IconPlus size={16} />} onClick={() => setAddStaffModalOpen(true)}>
-                  Yangi Xodim Qo'shish
+                <Button className="btn-gold" leftSection={<IconUserPlus size={16} />} onClick={() => setAddClientModalOpen(true)}>
+                  Yangi VIP Mijoz Qo'shish
                 </Button>
-                <Button variant="default" leftSection={<IconRefresh size={16} />} onClick={() => notifications.show({ title: 'Yangilandi', message: 'Xodimlar statistikasi jonli sinxronlandi' })}>
-                  Sinxronlash
+                <Button variant="outline" color="blue" leftSection={<IconIdBadge2 size={16} />} onClick={() => setAddAdminModalOpen(true)}>
+                  Yangi Admin/Menejer
                 </Button>
               </Group>
             </Group>
 
-            {/* KPI Cards */}
+            {/* Admin Metric Cards */}
             <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md" mb="xl">
-              <Card p="md" style={{ background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 12 }}>
-                <Text size="xs" c="dimmed">Jami Ishchilar Soni</Text>
-                <Title order={2} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>{totalStaffCount}</Title>
-                <Text size="xs" c="teal">+4 yangi bu oy</Text>
+              <Card p="md" style={{ background: 'rgba(8,12,20,0.8)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: 14 }}>
+                <Group justify="space-between">
+                  <Stack gap={0}>
+                    <Text size="xs" c="dimmed">Faol VIP Mijozlar</Text>
+                    <Title order={2} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>{clients.length} nafar</Title>
+                    <Text size="xs" c="teal">+2 yangi kelgan</Text>
+                  </Stack>
+                  <IconUsers size={32} color="#d4af37" />
+                </Group>
               </Card>
-              <Card p="md" style={{ background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 12 }}>
-                <Text size="xs" c="dimmed">Hozir Navbatchilikda</Text>
-                <Title order={2} c="teal" style={{ fontFamily: 'Cinzel, serif' }}>{onDutyCount}</Title>
-                <Text size="xs" c="dimmed">Kunduzgi & tungi smena</Text>
+              <Card p="md" style={{ background: 'rgba(8,12,20,0.8)', border: '1px solid rgba(56,189,248,0.3)', borderRadius: 14 }}>
+                <Group justify="space-between">
+                  <Stack gap={0}>
+                    <Text size="xs" c="dimmed">Jami Tushum (Revenue)</Text>
+                    <Title order={2} c="blue" style={{ fontFamily: 'Cinzel, serif' }}>
+                      {formatMoney(clients.reduce((s, c) => s + c.spentUSD, 0))}
+                    </Title>
+                    <Text size="xs" c="teal">Oy bo'yicha yuqori</Text>
+                  </Stack>
+                  <IconDiamond size={32} color="#38bdf8" />
+                </Group>
               </Card>
-              <Card p="md" style={{ background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(56,189,248,0.2)', borderRadius: 12 }}>
-                <Text size="xs" c="dimmed">Faol Xizmat So'rovlari</Text>
-                <Title order={2} c="blue" style={{ fontFamily: 'Cinzel, serif' }}>28</Title>
-                <Text size="xs" c="dimmed">O'rtacha: 8 daqiqa</Text>
+              <Card p="md" style={{ background: 'rgba(8,12,20,0.8)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 14 }}>
+                <Group justify="space-between">
+                  <Stack gap={0}>
+                    <Text size="xs" c="dimmed">Tizim Administratorlari</Text>
+                    <Title order={2} c="teal" style={{ fontFamily: 'Cinzel, serif' }}>{admins.length} nafar</Title>
+                    <Text size="xs" c="dimmed">Barcha smenalar to'liq</Text>
+                  </Stack>
+                  <IconShieldCheck size={32} color="#10b981" />
+                </Group>
               </Card>
-              <Card p="md" style={{ background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(168,85,247,0.2)', borderRadius: 12 }}>
-                <Text size="xs" c="dimmed">Xonalar Bandligi</Text>
-                <Title order={2} c="grape" style={{ fontFamily: 'Cinzel, serif' }}>84%</Title>
-                <Text size="xs" c="dimmed">82 / 98 Xona band</Text>
+              <Card p="md" style={{ background: 'rgba(8,12,20,0.8)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 14 }}>
+                <Group justify="space-between">
+                  <Stack gap={0}>
+                    <Text size="xs" c="dimmed">Muloqot Xabarlari</Text>
+                    <Title order={2} c="grape" style={{ fontFamily: 'Cinzel, serif' }}>{chatMessages.length} ta</Title>
+                    <Text size="xs" c="gold">Jonli muloqot faol</Text>
+                  </Stack>
+                  <IconMessageDots size={32} color="#a855f7" />
+                </Group>
               </Card>
             </SimpleGrid>
 
-            {/* Department Split & Table */}
+            {/* Split: Left CRM Clients & Admins, Right Live Chat Center */}
             <Grid>
-              <Grid.Col span={{ base: 12, md: 4 }}>
-                <Card p="md" style={{ background: 'rgba(8,12,20,0.7)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <Title order={4} size="h5" mb="md" c="gold">Bo'limlar Bo'yicha Xodimlar</Title>
-                  <Stack gap="sm">
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">Qabulxona & Konsyerj</Text>
-                      <Badge color="gold">18 xodim</Badge>
+              {/* Left Column: VIP Clients Database & Admins Table */}
+              <Grid.Col span={{ base: 12, lg: 7 }}>
+                {/* 1. VIP Clients CRM */}
+                <Paper className="luxury-card" p="lg" mb="xl">
+                  <Group justify="space-between" mb="md">
+                    <Stack gap={0}>
+                      <Title order={4} size="h5" c="gold">VIP Mehmonlar Ro'yxati (Client CRM Database)</Title>
+                      <Text size="xs" c="dimmed">Ro'yxatdan o'tgan barcha VIP mijozlar, ularning xonalari va balansi</Text>
+                    </Stack>
+                    <Button size="xs" className="btn-gold" leftSection={<IconUserPlus size={14} />} onClick={() => setAddClientModalOpen(true)}>
+                      Mijoz Qo'shish
+                    </Button>
+                  </Group>
+
+                  <TextInput
+                    placeholder="Mijoz ismi, xonasi yoki maqomi bo'yicha qidirish..."
+                    value={clientSearch}
+                    onChange={e => setClientSearch(e.target.value)}
+                    leftSection={<IconSearch size={16} />}
+                    mb="md"
+                  />
+
+                  <Table highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>VIP Mehmon</Table.Th>
+                        <Table.Th>Xona & Maqom</Table.Th>
+                        <Table.Th>Jami Sarf</Table.Th>
+                        <Table.Th>Holati</Table.Th>
+                        <Table.Th>Amallar</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {filteredClients.map(cl => (
+                        <Table.Tr key={cl.id}>
+                          <Table.Td>
+                            <Group gap="xs">
+                              <Avatar color="gold" radius="xl">{cl.name.charAt(0)}</Avatar>
+                              <Stack gap={0}>
+                                <Text size="sm" fw={700}>{cl.name}</Text>
+                                <Text size="xs" c="dimmed">{cl.phone}</Text>
+                              </Stack>
+                            </Group>
+                          </Table.Td>
+                          <Table.Td>
+                            <Text size="xs" fw={700}>{cl.room}</Text>
+                            <Badge size="xs" color="gold" variant="light">{cl.tier}</Badge>
+                          </Table.Td>
+                          <Table.Td>
+                            <Text size="xs" fw={800} c="gold">{formatMoney(cl.spentUSD)}</Text>
+                          </Table.Td>
+                          <Table.Td>
+                            <Badge size="xs" color={cl.status === 'Joylashgan' ? 'teal' : 'blue'}>{cl.status}</Badge>
+                          </Table.Td>
+                          <Table.Td>
+                            <ActionIcon
+                              size="sm"
+                              variant="subtle"
+                              color="red"
+                              onClick={() => {
+                                setClients(prev => prev.filter(c => c.id !== cl.id));
+                                notifications.show({ title: 'Mijoz o\'chirildi', message: `${cl.name} o'chirildi`, color: 'red' });
+                              }}
+                            >
+                              <IconTrash size={14} />
+                            </ActionIcon>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </Paper>
+
+                {/* 2. Admin & Staff Team Table */}
+                <Paper className="luxury-card" p="lg">
+                  <Group justify="space-between" mb="md">
+                    <Stack gap={0}>
+                      <Title order={4} size="h5" c="blue">Mehmonxona Administratorlari va Menejerlar</Title>
+                      <Text size="xs" c="dimmed">Tizimga kirish huquqiga ega boshqaruv xodimlari</Text>
+                    </Stack>
+                    <Button size="xs" variant="outline" color="blue" leftSection={<IconIdBadge2 size={14} />} onClick={() => setAddAdminModalOpen(true)}>
+                      Admin Qo'shish
+                    </Button>
+                  </Group>
+
+                  <Table highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Xodim</Table.Th>
+                        <Table.Th>Lavozim</Table.Th>
+                        <Table.Th>Huquq</Table.Th>
+                        <Table.Th>Holati</Table.Th>
+                        <Table.Th>O'chirish</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {admins.map(adm => (
+                        <Table.Tr key={adm.id}>
+                          <Table.Td>
+                            <Group gap="xs">
+                              <Avatar color="blue" radius="xl">{adm.name.charAt(0)}</Avatar>
+                              <Stack gap={0}>
+                                <Text size="sm" fw={700}>{adm.name}</Text>
+                                <Text size="xs" c="dimmed">{adm.email}</Text>
+                              </Stack>
+                            </Group>
+                          </Table.Td>
+                          <Table.Td><Text size="xs">{adm.role}</Text></Table.Td>
+                          <Table.Td><Badge size="xs" color="blue">{adm.access}</Badge></Table.Td>
+                          <Table.Td><Text size="xs" c="teal">{adm.lastActive}</Text></Table.Td>
+                          <Table.Td>
+                            <ActionIcon
+                              size="sm"
+                              variant="subtle"
+                              color="red"
+                              onClick={() => {
+                                setAdmins(prev => prev.filter(a => a.id !== adm.id));
+                              }}
+                            >
+                              <IconTrash size={14} />
+                            </ActionIcon>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </Paper>
+              </Grid.Col>
+
+              {/* Right Column: Live Chat & Communication Center (Admin <-> Client) */}
+              <Grid.Col span={{ base: 12, lg: 5 }}>
+                <Paper className="luxury-card" p="lg" style={{ border: '1px solid rgba(212, 175, 55, 0.4)', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <Group justify="space-between" pb="sm" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }} mb="md">
+                    <Group gap="xs">
+                      <div className="pulse-indicator" />
+                      <Stack gap={0}>
+                        <Title order={4} size="h5" c="gold">Jonli Muloqot Markazi (Client &lt;-&gt; Admin Chat)</Title>
+                        <Text size="xs" c="dimmed">Mijozlar bilan tezkor aloqa va xizmat so'rovlari</Text>
+                      </Stack>
                     </Group>
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">Oshxona & Restoran</Text>
-                      <Badge color="gold">36 xodim</Badge>
-                    </Group>
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">Xona Xizmati & Tozalik</Text>
-                      <Badge color="gold">42 xodim</Badge>
-                    </Group>
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">VIP Haydovchilar</Text>
-                      <Badge color="gold">16 xodim</Badge>
-                    </Group>
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">Xavfsizlik & Muhandislik</Text>
-                      <Badge color="gold">14 xodim</Badge>
-                    </Group>
-                    <Group justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                      <Text size="sm">Spa & Salomatlik</Text>
-                      <Badge color="gold">16 xodim</Badge>
+                    <Badge color="gold">{chatMessages.length} xabar</Badge>
+                  </Group>
+
+                  {/* Messages Stream */}
+                  <ScrollArea h={420} pr="sm" mb="md">
+                    <Stack gap="sm">
+                      {chatMessages.map(msg => (
+                        <Box
+                          key={msg.id}
+                          p="sm"
+                          style={{
+                            background: msg.sender === 'client' ? 'rgba(212, 175, 55, 0.12)' : 'rgba(56, 189, 248, 0.12)',
+                            borderRadius: 10,
+                            borderLeft: `4px solid ${msg.sender === 'client' ? '#d4af37' : '#38bdf8'}`,
+                            marginLeft: msg.sender === 'admin' ? 30 : 0,
+                            marginRight: msg.sender === 'client' ? 30 : 0
+                          }}
+                        >
+                          <Group justify="space-between" mb={2}>
+                            <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : 'blue'}>
+                              {msg.senderName} {msg.sender === 'client' ? '👑' : '🛡️'}
+                            </Text>
+                            <Text size="xs" c="dimmed">{msg.time}</Text>
+                          </Group>
+                          <Text size="sm">{msg.text}</Text>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </ScrollArea>
+
+                  {/* Admin Reply Box */}
+                  <Stack gap="xs" mt="auto">
+                    <Text size="xs" fw={700} c="dimmed">Admin nomidan tezkor javob yozish:</Text>
+                    <Group gap="xs">
+                      <TextInput
+                        placeholder="Mehmon bilan muloqot qiling..."
+                        value={chatInput}
+                        onChange={e => setChatInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleSendMessage('admin')}
+                        style={{ flexGrow: 1 }}
+                      />
+                      <Button className="btn-gold" onClick={() => handleSendMessage('admin')} leftSection={<IconSend size={16} />}>
+                        Yuborish
+                      </Button>
                     </Group>
                   </Stack>
-                </Card>
-              </Grid.Col>
-
-              <Grid.Col span={{ base: 12, md: 8 }}>
-                <Group mb="md" justify="space-between">
-                  <TextInput
-                    placeholder="Xodim ismi yoki lavozimi..."
-                    value={staffSearch}
-                    onChange={e => setStaffSearch(e.target.value)}
-                    leftSection={<IconSearch size={16} />}
-                    style={{ flexGrow: 1 }}
-                  />
-                  <Select
-                    value={staffDeptFilter}
-                    onChange={v => setStaffDeptFilter(v || 'all')}
-                    data={[
-                      { value: 'all', label: 'Barcha Bo\'limlar' },
-                      { value: 'Qabulxona & Konsyerj', label: 'Qabulxona & Konsyerj' },
-                      { value: 'Oshxona & Restoran', label: 'Oshxona & Restoran' },
-                      { value: 'Xona Xizmati & Tozalik', label: 'Xona Xizmati & Tozalik' },
-                      { value: 'VIP Haydovchilar', label: 'VIP Haydovchilar' },
-                      { value: 'Xavfsizlik & Muhandislik', label: 'Xavfsizlik & Muhandislik' },
-                      { value: 'Spa & Salomatlik', label: 'Spa & Salomatlik' }
-                    ]}
-                  />
-                </Group>
-
-                <Table highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Xodim</Table.Th>
-                      <Table.Th>Bo'lim & Lavozim</Table.Th>
-                      <Table.Th>Smena</Table.Th>
-                      <Table.Th>Holati</Table.Th>
-                      <Table.Th>Amallar</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {filteredStaff.map(emp => (
-                      <Table.Tr key={emp.id}>
-                        <Table.Td>
-                          <Group gap="xs">
-                            <Box style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: '50%',
-                              background: 'var(--gold-gradient)',
-                              color: '#0b0f19',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: 800
-                            }}>
-                              {emp.name.charAt(0)}
-                            </Box>
-                            <Stack gap={0}>
-                              <Text size="sm" fw={600}>{emp.name}</Text>
-                              <Text size="xs" c="dimmed">{emp.phone}</Text>
-                            </Stack>
-                          </Group>
-                        </Table.Td>
-                        <Table.Td>
-                          <Text size="xs" fw={700}>{emp.dept}</Text>
-                          <Text size="xs" c="dimmed">{emp.role}</Text>
-                        </Table.Td>
-                        <Table.Td><Text size="xs">{emp.shift}</Text></Table.Td>
-                        <Table.Td>
-                          <Badge
-                            color={emp.status === 'Navbatchilikda' ? 'teal' : (emp.status === 'Dam olishda' ? 'gray' : 'yellow')}
-                            variant="light"
-                          >
-                            {emp.status}
-                          </Badge>
-                        </Table.Td>
-                        <Table.Td>
-                          <Group gap="xs">
-                            <Tooltip label="Holatni o'zgartirish">
-                              <ActionIcon variant="subtle" color="gold" onClick={() => toggleStaffStatus(emp.id)}>
-                                <IconRefresh size={16} />
-                              </ActionIcon>
-                            </Tooltip>
-                            <Tooltip label="O'chirish">
-                              <ActionIcon variant="subtle" color="red" onClick={() => deleteStaff(emp.id)}>
-                                <IconTrash size={16} />
-                              </ActionIcon>
-                            </Tooltip>
-                          </Group>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
+                </Paper>
               </Grid.Col>
             </Grid>
+          </Container>
+        </Box>
+      )}
 
-            {/* Live Activity Stream */}
-            <Box mt="xl" p="md" style={{ background: 'rgba(8,12,20,0.8)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
-              <Group gap="xs" mb="sm">
-                <div className="pulse-indicator" />
-                <Text size="sm" fw={700} c="gold">Jonli Mehmonxona Xizmatlari Jurnali (Live Activity Feed)</Text>
-              </Group>
-              <Stack gap="xs">
-                {activityFeed.map((msg, idx) => (
-                  <Group key={idx} justify="space-between" p="xs" style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 6 }}>
-                    <Text size="xs"><IconCheck size={14} color="#10b981" /> {msg}</Text>
-                    <Text size="xs" c="dimmed">Jonli</Text>
-                  </Group>
-                ))}
-              </Stack>
-            </Box>
-          </Paper>
-        </Container>
-      </Box>
-
-      {/* FOOTER */}
-      <footer style={{ background: '#05080f', borderTop: '1px solid rgba(212, 175, 55, 0.3)', padding: '5rem 2rem 2rem' }}>
-        <Container size="xl">
-          <SimpleGrid cols={{ base: 1, md: 4 }} spacing="xl" mb="xl">
-            <Stack gap="sm">
-              <Group gap="xs">
-                <Box style={{ width: 36, height: 36, background: 'var(--gold-gradient)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000' }}>
-                  <IconCrown size={20} />
-                </Box>
-                <Title order={4} style={{ fontFamily: 'Cinzel, serif' }}>ROYAL GRAND PALACE</Title>
-              </Group>
-              <Text size="xs" c="dimmed">
-                Dunyo darajasidagi 5-yulduzli hashamat, beqiyos mehmondo'stlik, shaxsiy haydovchilik va yuqori darajadagi gurme oshxona xizmati.
-              </Text>
-            </Stack>
-
-            <Stack gap="xs">
-              <Text fw={700} c="gold">Tezkor Havolalar</Text>
-              <Text size="xs" c="dimmed" component="a" href="#rooms">Xonalar & Villalar</Text>
-              <Text size="xs" c="dimmed" component="a" href="#chauffeur">VIP Haydovchi</Text>
-              <Text size="xs" c="dimmed" component="a" href="#restaurant">Gurme Restoran</Text>
-              <Text size="xs" c="dimmed" component="a" href="#staff">Xodimlar Paneli</Text>
-            </Stack>
-
-            <Stack gap="xs">
-              <Text fw={700} c="gold">VIP Xizmatlar</Text>
-              <Text size="xs" c="dimmed">Rolls-Royce Aeroport Transferi</Text>
-              <Text size="xs" c="dimmed">Xonaga 24/7 Taom Yetkazish</Text>
-              <Text size="xs" c="dimmed">Royal Spa & Wellness</Text>
-              <Text size="xs" c="dimmed">Shaxsiy Yaxta Sayohati</Text>
-            </Stack>
-
-            <Stack gap="xs">
-              <Text fw={700} c="gold">Aloqa</Text>
-              <Text size="xs" c="dimmed">Grand Palace Boulevard 101, Luxury Coast</Text>
-              <Text size="xs" c="dimmed">+998 71 200 77 77 / +998 90 999 00 00</Text>
-              <Text size="xs" c="dimmed">vip-booking@royalgrandpalace.com</Text>
-            </Stack>
-          </SimpleGrid>
-
-          <Divider my="lg" color="rgba(255,255,255,0.06)" />
-          <Group justify="space-between">
-            <Text size="xs" c="dimmed">© 2026 ROYAL GRAND PALACE & RESORT. Barcha huquqlar himoyalangan.</Text>
-            <Text size="xs" c="gold">Muallif: Gulomuvich Hotel Pro</Text>
+      {/* =========================================================================
+          CLIENT LIVE CHAT DRAWER (CLIENT VIEW)
+          ========================================================================= */}
+      <Drawer
+        opened={clientChatOpen}
+        onClose={() => setClientChatOpen(false)}
+        title={
+          <Group gap="xs">
+            <IconCrown color="#d4af37" size={22} />
+            <Title order={4} size="h5" c="gold">24/7 Shaxsiy Butler & Concierge Desk</Title>
           </Group>
-        </Container>
-      </footer>
+        }
+        position="right"
+        size="md"
+        styles={{ content: { background: '#0f1626' } }}
+      >
+        <Stack justify="space-between" h="calc(100vh - 90px)">
+          <ScrollArea h="calc(100vh - 220px)" pr="sm">
+            <Stack gap="sm">
+              {chatMessages.map(msg => (
+                <Box
+                  key={msg.id}
+                  p="sm"
+                  style={{
+                    background: msg.sender === 'client' ? 'rgba(212, 175, 55, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+                    borderRadius: 10,
+                    borderLeft: `4px solid ${msg.sender === 'client' ? '#d4af37' : '#38bdf8'}`
+                  }}
+                >
+                  <Group justify="space-between" mb={2}>
+                    <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : 'blue'}>{msg.senderName}</Text>
+                    <Text size="xs" c="dimmed">{msg.time}</Text>
+                  </Group>
+                  <Text size="sm">{msg.text}</Text>
+                </Box>
+              ))}
+            </Stack>
+          </ScrollArea>
 
-      {/* ==================== MODALS ==================== */}
+          <Stack gap="xs" pt="sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <Text size="xs" c="dimmed">Tezkor so'rovlar: Xona tozalash, Restoran buyurtmasi, Shaxsiy transfer</Text>
+            <Group gap="xs">
+              <TextInput
+                placeholder="Butlerga xabar qoldiring..."
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSendMessage('client')}
+                style={{ flexGrow: 1 }}
+              />
+              <Button className="btn-gold" onClick={() => handleSendMessage('client')}>
+                <IconSend size={16} />
+              </Button>
+            </Group>
+          </Stack>
+        </Stack>
+      </Drawer>
 
-      {/* 1. Room Booking Modal */}
+      {/* =========================================================================
+          MODALS
+          ========================================================================= */}
+
+      {/* 1. Add Client Modal */}
+      <Modal
+        opened={addClientModalOpen}
+        onClose={() => setAddClientModalOpen(false)}
+        title={<Title order={3} size="h4" c="gold">Yangi VIP Mehmonni Ro'yxatga Olish (CRM)</Title>}
+        centered
+        styles={{ content: { background: '#0f1626', border: '1px solid #d4af37' } }}
+      >
+        <form onSubmit={handleAddClientSubmit}>
+          <Stack gap="md">
+            <TextInput label="Mijoz To'liq Ismi" value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Lord Alexander Wright" required />
+            <Select
+              label="VIP Maqomi (Tier)"
+              value={newClientTier}
+              onChange={(v: any) => setNewClientTier(v)}
+              data={[
+                { value: 'Diamond VIP', label: '💎 Diamond VIP (Qirollik darajasi)' },
+                { value: 'Royal Platinum', label: '👑 Royal Platinum' },
+                { value: 'Gold Elite', label: '⭐ Gold Elite' }
+              ]}
+            />
+            <TextInput label="Tayinlangan Xona" value={newClientRoom} onChange={e => setNewClientRoom(e.target.value)} placeholder="Suite 701 (Presidential)" required />
+            <TextInput label="Telefon Raqam" value={newClientPhone} onChange={e => setNewClientPhone(e.target.value)} placeholder="+44 7911 123456" required />
+            <TextInput label="Email" value={newClientEmail} onChange={e => setNewClientEmail(e.target.value)} placeholder="guest@vip.com" required />
+            <Button type="submit" fullWidth className="btn-gold" size="md">Mijozni Saqlash</Button>
+          </Stack>
+        </form>
+      </Modal>
+
+      {/* 2. Add Admin Modal */}
+      <Modal
+        opened={addAdminModalOpen}
+        onClose={() => setAddAdminModalOpen(false)}
+        title={<Title order={3} size="h4" c="blue">Yangi Admin / Menejer Tayinlash</Title>}
+        centered
+        styles={{ content: { background: '#0f1626', border: '1px solid #38bdf8' } }}
+      >
+        <form onSubmit={handleAddAdminSubmit}>
+          <Stack gap="md">
+            <TextInput label="Admin / Menejer Ismi" value={newAdminName} onChange={e => setNewAdminName(e.target.value)} placeholder="Bobur Mirzaev" required />
+            <Select
+              label="Lavozimi"
+              value={newAdminRole}
+              onChange={(v: any) => setNewAdminRole(v)}
+              data={[
+                { value: 'Bosh Menejer', label: 'Bosh Menejer (General Manager)' },
+                { value: 'VIP Concierge Lead', label: 'VIP Concierge Lead' },
+                { value: 'Tizim Administratori', label: 'Tizim Administratori' },
+                { value: 'Oshxona Boshlig\'i', label: 'Oshxona Boshlig\'i (Executive Chef)' }
+              ]}
+            />
+            <TextInput label="Email Manzili" value={newAdminEmail} onChange={e => setNewAdminEmail(e.target.value)} placeholder="admin@royalgrandpalace.com" required />
+            <Select
+              label="Ruxsat Huquqi"
+              value={newAdminAccess}
+              onChange={(v: any) => setNewAdminAccess(v)}
+              data={[
+                { value: 'Super Admin', label: 'Super Admin (Cheksiz)' },
+                { value: 'Menejer', label: 'Menejer (Boshqaruv)' },
+                { value: 'Operator', label: 'Operator (Faqat xizmat)' }
+              ]}
+            />
+            <Button type="submit" fullWidth color="blue" size="md">Adminni Saqlash</Button>
+          </Stack>
+        </form>
+      </Modal>
+
+      {/* 3. Room Booking Modal */}
       <Modal
         opened={bookingModalOpen}
         onClose={() => setBookingModalOpen(false)}
@@ -1420,28 +1561,10 @@ export default function App() {
                 <TextInput label="Ketish Sanasi" type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} required />
               </SimpleGrid>
 
-              <TextInput
-                label="Passport bo'yicha To'liq Ism"
-                placeholder="Alisher Qodirov"
-                value={guestName}
-                onChange={e => setGuestName(e.target.value)}
-                required
-              />
-
+              <TextInput label="Passport bo'yicha To'liq Ism" placeholder="Alisher Qodirov" value={guestName} onChange={e => setGuestName(e.target.value)} required />
               <SimpleGrid cols={2}>
-                <TextInput
-                  label="Telefon Raqam"
-                  placeholder="+998 90 123 45 67"
-                  value={guestPhone}
-                  onChange={e => setGuestPhone(e.target.value)}
-                  required
-                />
-                <Select
-                  label="Mehmonlar Soni"
-                  value={guestCount}
-                  onChange={v => setGuestCount(v || '2')}
-                  data={[{ value: '1', label: '1 Kishi' }, { value: '2', label: '2 Kishi' }, { value: '4', label: '4+ Kishi' }]}
-                />
+                <TextInput label="Telefon Raqam" placeholder="+998 90 123 45 67" value={guestPhone} onChange={e => setGuestPhone(e.target.value)} required />
+                <Select label="Mehmonlar" value={guestCount} onChange={v => setGuestCount(v || '2')} data={[{ value: '1', label: '1 Kishi' }, { value: '2', label: '2 Kishi' }, { value: '4', label: '4+ Kishi' }]} />
               </SimpleGrid>
 
               <Box p="sm" style={{ background: 'rgba(8,12,20,0.6)', borderRadius: 8 }}>
@@ -1459,9 +1582,7 @@ export default function App() {
                   <Text size="xs" c="dimmed">Kechalar soni: {calculateNights()} kecha</Text>
                   <Text size="md" fw={700}>Jami To'lov:</Text>
                 </Stack>
-                <Title order={2} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>
-                  {formatMoney(calculateBookingTotal())}
-                </Title>
+                <Title order={2} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>{formatMoney(calculateBookingTotal())}</Title>
               </Group>
 
               <Button type="submit" fullWidth className="btn-gold" size="lg">
@@ -1472,7 +1593,7 @@ export default function App() {
         )}
       </Modal>
 
-      {/* 2. Voucher Modal */}
+      {/* 4. Voucher Modal */}
       <Modal
         opened={voucherModalOpen}
         onClose={() => setVoucherModalOpen(false)}
@@ -1517,7 +1638,7 @@ export default function App() {
         )}
       </Modal>
 
-      {/* 3. Restaurant Cart Drawer */}
+      {/* 5. Cart Drawer */}
       <Drawer
         opened={cartDrawerOpen}
         onClose={() => setCartDrawerOpen(false)}
@@ -1551,27 +1672,30 @@ export default function App() {
           </Stack>
 
           <Stack gap="md" pt="md" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <TextInput
-              label="Yetkazish Xonasi / Manzili"
-              placeholder="Masalan: Presidential Suite 702 yoki Villa 3"
-              value={roomNumber}
-              onChange={e => setRoomNumber(e.target.value)}
-              required
-            />
+            <TextInput label="Yetkazish Xonasi" placeholder="Masalan: Suite 701 yoki Villa 4" value={roomNumber} onChange={e => setRoomNumber(e.target.value)} required />
             <Group justify="space-between">
               <Text fw={700}>Jami:</Text>
-              <Title order={3} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>
-                {formatMoney(cartTotalUSD)}
-              </Title>
+              <Title order={3} c="gold" style={{ fontFamily: 'Cinzel, serif' }}>{formatMoney(cartTotalUSD)}</Title>
             </Group>
-            <Button fullWidth className="btn-gold" size="md" onClick={handleCheckoutCart}>
+            <Button
+              fullWidth
+              className="btn-gold"
+              size="md"
+              onClick={() => {
+                if (cart.length === 0 || !roomNumber.trim()) return;
+                notifications.show({ title: 'Buyurtma Yetkazilmoqda', message: `Taomlar 20-30 daqiqada ${roomNumber} ga yetkaziladi!`, color: 'teal' });
+                setCart([]);
+                setCartDrawerOpen(false);
+                setRoomNumber('');
+              }}
+            >
               Xonaga Buyurtma Berish
             </Button>
           </Stack>
         </Stack>
       </Drawer>
 
-      {/* 4. Table Reservation Modal */}
+      {/* 6. Table Reservation Modal */}
       <Modal
         opened={tableModalOpen}
         onClose={() => setTableModalOpen(false)}
@@ -1579,64 +1703,30 @@ export default function App() {
         centered
         styles={{ content: { background: '#0f1626' } }}
       >
-        <form onSubmit={handleTableSubmit}>
-          <Stack gap="md">
-            <TextInput label="Ism va Familiya" value={tableName} onChange={e => setTableName(e.target.value)} placeholder="Alisher Qodirov" required />
-            <Select
-              label="Joylashuv Hududi"
-              value={tableZone}
-              onChange={v => setTableZone(v || 'terrace')}
-              data={[
-                { value: 'terrace', label: 'Panoramik Ochiq Terrasa (Dengiz manzarasi)' },
-                { value: 'vip_hall', label: 'Royal VIP Zali (Jonli Royal Pianino)' },
-                { value: 'sommelier', label: 'Sommelier Tasting Zonasi' }
-              ]}
-            />
-            <TextInput label="Sana va Vaqt" type="datetime-local" defaultValue="2026-08-25T19:30" required />
-            <Button type="submit" fullWidth className="btn-gold">Stolni Tasdiqlash</Button>
-          </Stack>
-        </form>
-      </Modal>
-
-      {/* 5. Add Staff Modal */}
-      <Modal
-        opened={addStaffModalOpen}
-        onClose={() => setAddStaffModalOpen(false)}
-        title={<Title order={3} size="h4" c="gold">Yangi Xodim Ro'yxatga Olish</Title>}
-        centered
-        styles={{ content: { background: '#0f1626' } }}
-      >
-        <form onSubmit={handleAddStaffSubmit}>
-          <Stack gap="md">
-            <TextInput label="Xodim Ismi va Familiyasi" value={newStaffName} onChange={e => setNewStaffName(e.target.value)} placeholder="Sardor Toirov" required />
-            <TextInput label="Lavozimi" value={newStaffRole} onChange={e => setNewStaffRole(e.target.value)} placeholder="Bosh Konsyerj" required />
-            <Select
-              label="Bo'lim"
-              value={newStaffDept}
-              onChange={v => setNewStaffDept(v || 'Qabulxona & Konsyerj')}
-              data={[
-                { value: 'Qabulxona & Konsyerj', label: 'Qabulxona & Konsyerj' },
-                { value: 'Oshxona & Restoran', label: 'Oshxona & Restoran' },
-                { value: 'Xona Xizmati & Tozalik', label: 'Xona Xizmati & Tozalik' },
-                { value: 'VIP Haydovchilar', label: 'VIP Haydovchilar' },
-                { value: 'Xavfsizlik & Muhandislik', label: 'Xavfsizlik & Muhandislik' },
-                { value: 'Spa & Salomatlik', label: 'Spa & Salomatlik' }
-              ]}
-            />
-            <Select
-              label="Smena"
-              value={newStaffShift}
-              onChange={v => setNewStaffShift(v || 'Kunduzgi (08:00 - 18:00)')}
-              data={[
-                { value: 'Kunduzgi (08:00 - 18:00)', label: 'Kunduzgi (08:00 - 18:00)' },
-                { value: 'Tungi (18:00 - 08:00)', label: 'Tungi (18:00 - 08:00)' },
-                { value: '24/7 Navbatchilik', label: '24/7 Navbatchilik' }
-              ]}
-            />
-            <TextInput label="Telefon Raqam" value={newStaffPhone} onChange={e => setNewStaffPhone(e.target.value)} placeholder="+998 90 555 12 34" required />
-            <Button type="submit" fullWidth className="btn-gold">Xodimlarga Qo'shish</Button>
-          </Stack>
-        </form>
+        <Stack gap="md">
+          <TextInput label="Ism va Familiya" value={tableName} onChange={e => setTableName(e.target.value)} placeholder="Lord Alexander Wright" required />
+          <Select
+            label="Joylashuv Hududi"
+            value={tableZone}
+            onChange={v => setTableZone(v || 'terrace')}
+            data={[
+              { value: 'terrace', label: 'Panoramik Ochiq Terrasa (Dengiz manzarasi)' },
+              { value: 'vip_hall', label: 'Royal VIP Zali (Jonli Royal Pianino)' },
+              { value: 'sommelier', label: 'Sommelier Tasting Zonasi' }
+            ]}
+          />
+          <TextInput label="Sana va Vaqt" type="datetime-local" defaultValue="2026-08-25T19:30" required />
+          <Button
+            className="btn-gold"
+            onClick={() => {
+              notifications.show({ title: 'Stol Band Qilindi', message: `Hurmatli ${tableName || 'Mehmon'}, stolingiz tasdiqlandi.`, color: 'teal' });
+              setTableModalOpen(false);
+              setTableName('');
+            }}
+          >
+            Stolni Tasdiqlash
+          </Button>
+        </Stack>
       </Modal>
     </Box>
   );
