@@ -1,0 +1,258 @@
+/* ==========================================================================
+   ROYAL GRAND PALACE & RESORT — ULTRA LUXURY CSS DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+  /* Premium Luxury Color Palette */
+  --bg-primary: #080c14;
+  --bg-secondary: #0f1626;
+  --bg-tertiary: #162035;
+  --bg-card: rgba(18, 27, 46, 0.75);
+  --bg-card-hover: rgba(26, 38, 64, 0.88);
+  --bg-glass: rgba(15, 23, 42, 0.7);
+  
+  /* Royal Gold Hierarchy */
+  --gold-primary: #d4af37;
+  --gold-light: #f5e08b;
+  --gold-dark: #aa8214;
+  --gold-glow: rgba(212, 175, 55, 0.25);
+  --gold-gradient: linear-gradient(135deg, #f7e199 0%, #d4af37 50%, #997517 100%);
+  --gold-gradient-hover: linear-gradient(135deg, #ffffff 0%, #fae8a8 40%, #d4af37 100%);
+  
+  /* Text Accents */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-gold: #e5c365;
+
+  /* Accent Colors */
+  --accent-emerald: #10b981;
+  --accent-blue: #38bdf8;
+  --accent-purple: #a855f7;
+  --accent-rose: #f43f5e;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(212, 175, 55, 0.28);
+  --border-gold-strong: rgba(212, 175, 55, 0.6);
+
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-display: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.7);
+  --shadow-gold: 0 0 25px rgba(212, 175, 55, 0.22);
+  --shadow-gold-lg: 0 0 40px rgba(212, 175, 55, 0.4);
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.65;
+  overflow-x: hidden;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(30, 58, 138, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: #25334d;
+  border-radius: 4px;
+  border: 1px solid var(--border-gold);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dark);
+}
+
+/* Ambient Background Lights */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+}
+.glow-1 {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+}
+.glow-2 {
+  width: 600px;
+  height: 600px;
+  bottom: 20%;
+  left: -200px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+}
+.glow-3 {
+  width: 450px;
+  height: 450px;
+  top: 50%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+}
+
+.gold-gradient-text {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Buttons */
+.btn-gold {
+  background: var(--gold-gradient) !important;
+  color: #0b0f19 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  transition: all var(--transition-normal) !important;
+}
+.btn-gold:hover {
+  background: var(--gold-gradient-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5) !important;
+}
+
+.btn-outline-gold {
+  background: rgba(212, 175, 55, 0.06) !important;
+  color: var(--gold-light) !important;
+  border: 1px solid var(--border-gold) !important;
+  backdrop-filter: blur(8px) !important;
+  transition: all var(--transition-normal) !important;
+}
+.btn-outline-gold:hover {
+  background: rgba(212, 175, 55, 0.18) !important;
+  border-color: var(--gold-primary) !important;
+  color: #fff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-gold) !important;
+}
+
+/* Section Header Helpers */
+.section-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 6.5rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--gold-primary);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 800px;
+}
+
+/* Luxury Card Hover effects */
+.luxury-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(16px) !important;
+  transition: all var(--transition-normal) !important;
+}
+.luxury-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: var(--border-gold) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), var(--shadow-gold) !important;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9rem 2rem 5rem;
+  background: 
+    linear-gradient(180deg, rgba(8, 12, 20, 0.5) 0%, rgba(8, 12, 20, 0.96) 100%),
+    url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+  text-align: center;
+}
+
+.hero-search-box {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  backdrop-filter: blur(25px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.15);
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Keyframes */
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.pulse-indicator {
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulseGreen 1.5s infinite;
+  display: inline-block;
+}
