@@ -24,7 +24,9 @@ import {
   Paper,
   Avatar,
   SegmentedControl,
-  ScrollArea
+  ScrollArea,
+  Switch,
+  Loader
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
@@ -45,11 +47,12 @@ import {
   IconCheck,
   IconPrinter,
   IconQrcode,
-  IconMessageDots,
   IconSend,
   IconUserPlus,
   IconIdBadge2,
-  IconDiamond
+  IconDiamond,
+  IconRobot,
+  IconWand
 } from '@tabler/icons-react';
 
 // --- TYPES ---
@@ -112,7 +115,7 @@ interface AdminUser {
 
 interface ChatMessage {
   id: string;
-  sender: 'client' | 'admin';
+  sender: 'client' | 'admin' | 'ai';
   senderName: string;
   text: string;
   time: string;
@@ -124,7 +127,7 @@ interface CartItem {
   quantity: number;
 }
 
-// --- ENRICHED DATASETS ---
+// --- DATASETS ---
 const EXPANDED_ROOMS: Room[] = [
   {
     id: 'deluxe-1',
@@ -375,26 +378,6 @@ const EXPANDED_MENU: MenuItem[] = [
     prepTime: '5 daqiqa',
     image: 'https://images.unsplash.com/photo-1569919659476-f0852f6834b7?auto=format&fit=crop&w=600&q=80',
     badge: 'Vintage 2013'
-  },
-  {
-    id: 'dish-7',
-    category: 'mains',
-    title: 'Château Filet Mignon Rossini',
-    desc: 'Foie gras, qora tryufel shavings va 50 yillik Madeira sousi bilan elita go\'sht taomi.',
-    priceUSD: 165,
-    prepTime: '25 daqiqa',
-    image: 'https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80',
-    badge: 'Chef Special'
-  },
-  {
-    id: 'dish-8',
-    category: 'desserts',
-    title: 'Grand Madagascar Vanilla Soufflé',
-    desc: 'Havo kabi yengil issiq sufle, oltin qoplangan malina sorbeti bilan.',
-    priceUSD: 45,
-    prepTime: '20 daqiqa',
-    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80',
-    badge: 'Klassik Gurme'
   }
 ];
 
@@ -403,8 +386,7 @@ const INITIAL_CLIENTS: ClientUser[] = [
   { id: 'cl-2', name: 'Kenji Takahashi', tier: 'Royal Platinum', room: 'Villa 4 (Ocean Sovereign)', spentUSD: 28500, phone: '+81 90 1234 5678', email: 'kenji@tokyovip.jp', checkIn: '2026-08-20', checkOut: '2026-08-30', status: 'Joylashgan' },
   { id: 'cl-3', name: 'Elena Rostova', tier: 'Royal Platinum', room: 'Penthouse 802', spentUSD: 19800, phone: '+377 93 12 34 56', email: 'elena@monacovip.mc', checkIn: '2026-08-24', checkOut: '2026-08-31', status: 'Joylashgan' },
   { id: 'cl-4', name: 'Sheikh Mansoor Al-Nahyan', tier: 'Diamond VIP', room: 'Royal Penthouse 901', spentUSD: 65000, phone: '+971 50 123 4567', email: 'mansoor@emiratesroyal.ae', checkIn: '2026-08-25', checkOut: '2026-09-05', status: 'Kutilmoqda' },
-  { id: 'cl-5', name: 'Princess Charlotte De Bourbon', tier: 'Diamond VIP', room: 'Emerald Estate Villa', spentUSD: 48000, phone: '+33 6 12 34 56 78', email: 'charlotte@parisroyal.fr', checkIn: '2026-08-26', checkOut: '2026-09-02', status: 'Kutilmoqda' },
-  { id: 'cl-6', name: 'Sardor Qosimov', tier: 'Gold Elite', room: 'Suite 504 (Deluxe Ocean)', spentUSD: 3600, phone: '+998 90 777 00 11', email: 'sardor@tashkent.uz', checkIn: '2026-08-23', checkOut: '2026-08-26', status: 'Joylashgan' }
+  { id: 'cl-5', name: 'Princess Charlotte De Bourbon', tier: 'Diamond VIP', room: 'Emerald Estate Villa', spentUSD: 48000, phone: '+33 6 12 34 56 78', email: 'charlotte@parisroyal.fr', checkIn: '2026-08-26', checkOut: '2026-09-02', status: 'Kutilmoqda' }
 ];
 
 const INITIAL_ADMINS: AdminUser[] = [
@@ -416,12 +398,38 @@ const INITIAL_ADMINS: AdminUser[] = [
 
 const INITIAL_CHAT_MSGS: ChatMessage[] = [
   { id: 'm-1', sender: 'client', senderName: 'Lord Alexander (Suite 701)', text: 'Assalomu alaykum! Xonamizga soat 20:00 da Dom Pérignon va Beluga ikra yetkazib bera olasizmi?', time: '18:40', isRead: true },
-  { id: 'm-2', sender: 'admin', senderName: 'VIP Concierge (Madina)', text: 'Hurmatli Lord Alexander, buyurtmangiz qabul qilindi! Bosh sommelye taomni aynan 20:00 da shaxsan topshiradi.', time: '18:42', isRead: true },
-  { id: 'm-3', sender: 'client', senderName: 'Lord Alexander (Suite 701)', text: 'Katta rahmat! Ertaga ertalab soat 09:00 ga aeroportga Rolls-Royce Phantom tayyor bo\'lsin iltimos.', time: '18:45', isRead: false }
+  { id: 'm-2', sender: 'ai', senderName: '🤖 Royal AI Concierge', text: 'Hurmatli Lord Alexander, so\'rovingiz qabul qilindi! Oshpazlarimiz 20:00 ga qadar xonangizga sovutilgan Dom Pérignon va Beluga ikrani yetkazishni rejalashtirdi. Boshqa maxsus istaklaringiz bormi?', time: '18:41', isRead: true },
+  { id: 'm-3', sender: 'client', senderName: 'Lord Alexander (Suite 701)', text: 'Ertaga soat 09:00 ga aeroportga Rolls-Royce Phantom tayyor bo\'lsin iltimos.', time: '18:45', isRead: false }
 ];
 
+// --- AI BRAIN ENGINE (5-STAR ROYAL INTELLIGENCE) ---
+function generateAIResponse(userText: string): string {
+  const text = userText.toLowerCase();
+
+  if (text.includes('shampan') || text.includes('ikra') || text.includes('ovqat') || text.includes('taom') || text.includes('steyk') || text.includes('nonushta')) {
+    return `Hurmatli mehmonimiz! Sizning gurme taomlar bo'yicha buyurtmangiz Mishelin oshxonamizga uzatildi. Bosh oshpazimiz 20-30 daqiqa ichida buyurtmangizni maxsus kumush idishlarda xonangizga shaxsan yetkazib berishini ta'minlaymiz. Yoqimli ishtaha! 🥂🍽️`;
+  }
+  
+  if (text.includes('rolls') || text.includes('maybach') || text.includes('mashina') || text.includes('aeroport') || text.includes('transfer') || text.includes('haydovchi')) {
+    return `VIP Haydovchi xizmati bo'yicha so'rovingiz tasdiqlandi. Siz uchun litsenziyali katta haydovchimiz (Rolls-Royce Phantom / Maybach) belgilangan vaqtda asosiy kirish darvozasida kutib oladi. Haydovchi telefon raqami: +998 90 333 44 55. Xavfsiz va hashamatli safar tilaymiz! 🚗👑`;
+  }
+
+  if (text.includes('tozalash') || text.includes('xona') || text.includes('sochiq') || text.includes('vanna') || text.includes('harorat') || text.includes('service')) {
+    return `Xona xizmati (Housekeeping & Butler Service) guruhiga darhol xabar berildi. Navbatchi butlerimiz 5 daqiqa ichida xonangiz qulayligini 100% ideal darajaga keltirish uchun yetib boradi. Sizning huzur-halovatingiz bizning eng oliy burchimizdir! ✨🛎️`;
+  }
+
+  if (text.includes('spa') || text.includes('massaj') || text.includes('sauna') || text.includes('basseyn')) {
+    return `Royal Spa & Wellness majmuasida siz uchun maxsus xususiy sauna va yoshartirish seansi bron qilindi. Bosh spa-terapevtimiz sizni kutmoqda. Sog'lik va xotirjamlik hamrohingiz bo'lsin! 🌿🧖‍♂️`;
+  }
+
+  if (text.includes('salom') || text.includes('assalom') || text.includes('rahmat') || text.includes('qalesiz')) {
+    return `Assalomu alaykum, muhtaram VIP mehmonimiz! Royal Grand Palace AI Yordamchisiman. Sizga 24/7 rejimda xonalar, Mishelin oshxonasi, VIP transfer yoki maxsus talablaringiz bo'yicha yordam berishdan baxtiyorman. Qanday xizmat ko'rsatay? 👑`;
+  }
+
+  return `Hurmatli mehmon! Sizning so'rovingiz qabul qilindi va darhol Bosh Menejer hamda VIP Concierge stantsiyasiga yuborildi. Barcha talablaringiz zudlik bilan eng yuqori darajada bajariladi. Qo'shimcha savollaringiz bo'lsa, har doim xizmatingizdamiz! 🌟`;
+}
+
 export default function App() {
-  // Current Mode: 'client' (Mehmon) vs 'admin' (Boshqaruv/Admin CRM)
   const [activePortal, setActivePortal] = useState<'client' | 'admin'>('client');
   const [currency, setCurrency] = useState<'USD' | 'UZS' | 'EUR'>('USD');
   const [lang, setLang] = useState<'uz' | 'en' | 'ru'>('uz');
@@ -444,6 +452,10 @@ export default function App() {
   });
   const [chatInput, setChatInput] = useState('');
   const [clientChatOpen, setClientChatOpen] = useState(false);
+
+  // AI Assistant States
+  const [aiAutoReplyEnabled, setAiAutoReplyEnabled] = useState(true);
+  const [isAiTyping, setIsAiTyping] = useState(false);
 
   // Cart
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -523,9 +535,11 @@ export default function App() {
     return '$' + amountUSD.toLocaleString('en-US');
   };
 
-  // Chat message send handler
-  const handleSendMessage = (senderType: 'client' | 'admin') => {
-    if (!chatInput.trim()) return;
+  // Chat message send handler with integrated AI response
+  const handleSendMessage = (senderType: 'client' | 'admin', customText?: string) => {
+    const textToSend = customText || chatInput;
+    if (!textToSend.trim()) return;
+
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -533,18 +547,52 @@ export default function App() {
       id: 'msg-' + Date.now(),
       sender: senderType,
       senderName: senderType === 'client' ? 'Mehmon (Lord Alexander)' : 'VIP Concierge Boshqaruvi',
-      text: chatInput.trim(),
+      text: textToSend.trim(),
       time: timeStr,
       isRead: false
     };
 
     setChatMessages(prev => [...prev, newMsg]);
-    setChatInput('');
+    if (!customText) setChatInput('');
 
+    // Trigger AI Auto-Response if Client sent message and AI is enabled
+    if (senderType === 'client' && aiAutoReplyEnabled) {
+      setIsAiTyping(true);
+      setTimeout(() => {
+        const aiReplyText = generateAIResponse(textToSend);
+        const aiTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const aiMsg: ChatMessage = {
+          id: 'ai-' + Date.now(),
+          sender: 'ai',
+          senderName: '🤖 Royal AI Concierge',
+          text: aiReplyText,
+          time: aiTime,
+          isRead: false
+        };
+        setChatMessages(prev => [...prev, aiMsg]);
+        setIsAiTyping(false);
+        notifications.show({
+          title: '🤖 Royal AI Concierge Javob Berdi',
+          message: aiReplyText.slice(0, 70) + '...',
+          color: 'gold'
+        });
+      }, 1200);
+    }
+  };
+
+  // Generate Admin AI Copilot suggestion
+  const handleAdminGenerateAISuggestion = () => {
+    const lastClientMsg = [...chatMessages].reverse().find(m => m.sender === 'client');
+    if (!lastClientMsg) {
+      setChatInput('Hurmatli VIP mehmonimiz, Royal Grand Palace xizmatingizga doimo tayyor!');
+      return;
+    }
+    const suggested = generateAIResponse(lastClientMsg.text);
+    setChatInput(`[AI Copilot Tavsiyasi]: ${suggested}`);
     notifications.show({
-      title: 'Xabar yuborildi',
-      message: `${newMsg.senderName}: "${newMsg.text}"`,
-      color: senderType === 'client' ? 'gold' : 'teal'
+      title: '🤖 AI Copilot Javob Generatsiya Qildi',
+      message: "Matn kiritish maydoniga joylandi. Uni tahrirlab yoki to'g'ridan-to'g'ri yuborishingiz mumkin.",
+      color: 'blue'
     });
   };
 
@@ -616,7 +664,6 @@ export default function App() {
       totalPrice: formatMoney(calculateBookingTotal())
     };
 
-    // Auto add to clients
     const newCl: ClientUser = {
       id: 'cl-' + Date.now(),
       name: guestName,
@@ -699,12 +746,12 @@ export default function App() {
 
   return (
     <Box style={{ position: 'relative', minHeight: '100vh', background: '#080c14', color: '#f8fafc' }}>
-      {/* Background Ambient Glows */}
+      {/* Ambient Glows */}
       <div className="ambient-glow glow-1" />
       <div className="ambient-glow glow-2" />
       <div className="ambient-glow glow-3" />
 
-      {/* TOP NAVIGATION & PORTAL SWITCHER */}
+      {/* TOP NAVBAR & PORTAL TOGGLE */}
       <header style={{
         position: 'sticky',
         top: 0,
@@ -716,7 +763,6 @@ export default function App() {
       }}>
         <Container size="xl" px={0}>
           <Group justify="space-between">
-            {/* Logo */}
             <Group gap="sm" style={{ cursor: 'pointer' }} onClick={() => setActivePortal('client')}>
               <Box style={{
                 width: 42,
@@ -736,12 +782,11 @@ export default function App() {
                   ROYAL GRAND PALACE
                 </Text>
                 <Text size="xs" c="gold" fw={700} style={{ letterSpacing: 1.5 }}>
-                  ★★★★★ RESORT & LUXURY SUITES
+                  ★★★★★ 5-STAR RESORT & AI CONCIERGE
                 </Text>
               </Stack>
             </Group>
 
-            {/* Portal Switcher (Client vs Admin) */}
             <SegmentedControl
               value={activePortal}
               onChange={(val: any) => {
@@ -754,13 +799,12 @@ export default function App() {
               }}
               data={[
                 { label: '👑 VIP Mehmon Portali', value: 'client' },
-                { label: '🛡️ Admin & CRM Markazi', value: 'admin' }
+                { label: '🛡️ Admin & AI Markazi', value: 'admin' }
               ]}
               color={activePortal === 'admin' ? 'blue' : 'gold'}
               radius="md"
             />
 
-            {/* Global Actions */}
             <Group gap="sm">
               <Menu shadow="md" width={140}>
                 <Menu.Target>
@@ -822,7 +866,7 @@ export default function App() {
       </header>
 
       {/* =========================================================================
-          VIEW A: VIP MEHMON PORTALI (CLIENT EXPERIENCE)
+          VIEW A: VIP MEHMON PORTALI (CLIENT EXPERIENCE + AI ASSISTANT)
           ========================================================================= */}
       {activePortal === 'client' && (
         <Box>
@@ -833,11 +877,11 @@ export default function App() {
                 size="lg"
                 variant="outline"
                 color="gold"
-                leftSection={<IconCrown size={14} />}
+                leftSection={<IconRobot size={16} />}
                 mb="lg"
                 style={{ letterSpacing: 2, padding: '0.6rem 1.4rem' }}
               >
-                5-YULDUZLI QIROLLIK HASHAMATI
+                ROYAL AI 24/7 AQLLI YORDAMCHI BILAN JIQOZLANGAN
               </Badge>
 
               <Title style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4.4rem)', lineHeight: 1.15, textShadow: '0 4px 30px rgba(0,0,0,0.9)' }} mb="md">
@@ -845,7 +889,7 @@ export default function App() {
               </Title>
 
               <Text size="lg" c="gray.3" maw={820} mx="auto" mb="xl">
-                Royal Grand Palace — 24/7 shaxsiy Butler va Concierge, Rolls-Royce va Maybach avtoparki hamda 3 ta Mishelin yulduzli gurme oshxona xizmati.
+                Royal Grand Palace — 24/7 AI Smart Butler, Rolls-Royce va Maybach avtoparki hamda 3 ta Mishelin yulduzli gurme oshxona xizmati.
               </Text>
 
               <Group justify="center" gap="md" mb="xl">
@@ -855,8 +899,8 @@ export default function App() {
                 <Button size="lg" className="btn-outline-gold" component="a" href="#chauffeur" leftSection={<IconCar size={20} />}>
                   VIP Transfer Chaqirish
                 </Button>
-                <Button size="lg" variant="default" onClick={() => setClientChatOpen(true)} leftSection={<IconMessageDots size={20} color="#d4af37" />}>
-                  Shaxsiy Butler bilan Chat
+                <Button size="lg" variant="default" onClick={() => setClientChatOpen(true)} leftSection={<IconRobot size={20} color="#d4af37" />}>
+                  🤖 AI Butler bilan Muloqot
                 </Button>
               </Group>
 
@@ -905,7 +949,7 @@ export default function App() {
                 <span className="section-tag">HASHAMAT VA QULAYLIK</span>
                 <h2 className="section-title">Qirollik Xonalari va Shaxsiy Villalar ({rooms.length})</h2>
                 <Text className="section-desc">
-                  Har bir xona shaxsiy did, zamonaviy Smart-Home tizimi, to'liq panelli dengiz manzarasi va 24/7 shaxsiy Butler xizmati bilan jihozlangan.
+                  Har bir xona shaxsiy did, zamonaviy Smart-Home tizimi, to'liq panelli dengiz manzarasi va 24/7 AI Butler xizmati bilan jihozlangan.
                 </Text>
 
                 <Tabs value={roomFilter} onChange={v => setRoomFilter(v || 'all')} mt="md">
@@ -1121,20 +1165,20 @@ export default function App() {
             </Container>
           </Box>
 
-          {/* FLOATING BUTLER CHAT BUTTON (FOR CLIENTS) */}
+          {/* FLOATING AI BUTLER CHAT BUTTON (FOR CLIENTS) */}
           <Box style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}>
             <Button
               className="btn-gold"
               size="lg"
               radius="xl"
-              leftSection={<IconMessageDots size={22} />}
+              leftSection={<IconRobot size={22} />}
               onClick={() => setClientChatOpen(true)}
               style={{ boxShadow: '0 10px 35px rgba(212, 175, 55, 0.6)' }}
             >
-              Shaxsiy Butler Chat
-              {chatMessages.filter(m => m.sender === 'admin' && !m.isRead).length > 0 && (
-                <Badge size="xs" circle color="red" ml="xs">
-                  {chatMessages.filter(m => m.sender === 'admin' && !m.isRead).length}
+              🤖 Royal AI Butler & Concierge
+              {chatMessages.filter(m => m.sender === 'ai' || m.sender === 'admin').length > 0 && (
+                <Badge size="xs" circle color="teal" ml="xs">
+                  AI
                 </Badge>
               )}
             </Button>
@@ -1143,7 +1187,7 @@ export default function App() {
       )}
 
       {/* =========================================================================
-          VIEW B: ADMIN & CRM BOSHQARUV MARKAZI (ADMIN MANAGEMENT & CRM)
+          VIEW B: ADMIN & CRM BOSHQARUV MARKAZI (ADMIN MANAGEMENT + AI COPILOT)
           ========================================================================= */}
       {activePortal === 'admin' && (
         <Box py="xl">
@@ -1153,9 +1197,9 @@ export default function App() {
               <Stack gap={2}>
                 <Group gap="xs">
                   <Badge color="blue" size="lg" leftSection={<IconShieldCheck size={16} />}>ADMIN & CRM OPERATSIYALAR MARKAZI</Badge>
-                  <Badge color="teal" variant="dot">Jonli Tizim Faol</Badge>
+                  <Badge color="teal" variant="filled" leftSection={<IconRobot size={14} />}>AI Copilot Faol</Badge>
                 </Group>
-                <Title order={2} style={{ fontFamily: 'Cinzel, serif' }}>Mehmonxona boshqaruvi, Mijozlar CRM va Jonli Aloqa</Title>
+                <Title order={2} style={{ fontFamily: 'Cinzel, serif' }}>Mehmonxona boshqaruvi, Mijozlar CRM va AI Jonli Aloqa</Title>
               </Stack>
               <Group>
                 <Button className="btn-gold" leftSection={<IconUserPlus size={16} />} onClick={() => setAddClientModalOpen(true)}>
@@ -1204,11 +1248,11 @@ export default function App() {
               <Card p="md" style={{ background: 'rgba(8,12,20,0.8)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 14 }}>
                 <Group justify="space-between">
                   <Stack gap={0}>
-                    <Text size="xs" c="dimmed">Muloqot Xabarlari</Text>
+                    <Text size="xs" c="dimmed">AI & Muloqot Xabarlari</Text>
                     <Title order={2} c="grape" style={{ fontFamily: 'Cinzel, serif' }}>{chatMessages.length} ta</Title>
-                    <Text size="xs" c="gold">Jonli muloqot faol</Text>
+                    <Text size="xs" c="gold">AI Auto-Pilot: Yoqilgan</Text>
                   </Stack>
-                  <IconMessageDots size={32} color="#a855f7" />
+                  <IconRobot size={32} color="#a855f7" />
                 </Group>
               </Card>
             </SimpleGrid>
@@ -1344,53 +1388,86 @@ export default function App() {
                 </Paper>
               </Grid.Col>
 
-              {/* Right Column: Live Chat & Communication Center (Admin <-> Client) */}
+              {/* Right Column: Live Chat & Communication Center with AI Auto-Pilot */}
               <Grid.Col span={{ base: 12, lg: 5 }}>
                 <Paper className="luxury-card" p="lg" style={{ border: '1px solid rgba(212, 175, 55, 0.4)', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <Group justify="space-between" pb="sm" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }} mb="md">
                     <Group gap="xs">
-                      <div className="pulse-indicator" />
+                      <IconRobot size={22} color="#d4af37" />
                       <Stack gap={0}>
-                        <Title order={4} size="h5" c="gold">Jonli Muloqot Markazi (Client &lt;-&gt; Admin Chat)</Title>
-                        <Text size="xs" c="dimmed">Mijozlar bilan tezkor aloqa va xizmat so'rovlari</Text>
+                        <Title order={4} size="h5" c="gold">AI Muloqot Markazi (Client &lt;-&gt; Admin &lt;-&gt; AI)</Title>
+                        <Text size="xs" c="dimmed">AI Auto-Pilot yordamida tezkor javoblar</Text>
                       </Stack>
                     </Group>
-                    <Badge color="gold">{chatMessages.length} xabar</Badge>
+                    <Switch
+                      label="AI Auto-Pilot"
+                      checked={aiAutoReplyEnabled}
+                      onChange={e => setAiAutoReplyEnabled(e.currentTarget.checked)}
+                      color="gold"
+                      size="xs"
+                    />
                   </Group>
 
                   {/* Messages Stream */}
-                  <ScrollArea h={420} pr="sm" mb="md">
+                  <ScrollArea h={380} pr="sm" mb="md">
                     <Stack gap="sm">
                       {chatMessages.map(msg => (
                         <Box
                           key={msg.id}
                           p="sm"
                           style={{
-                            background: msg.sender === 'client' ? 'rgba(212, 175, 55, 0.12)' : 'rgba(56, 189, 248, 0.12)',
+                            background: msg.sender === 'client'
+                              ? 'rgba(212, 175, 55, 0.12)'
+                              : msg.sender === 'ai'
+                              ? 'rgba(168, 85, 247, 0.15)'
+                              : 'rgba(56, 189, 248, 0.12)',
                             borderRadius: 10,
-                            borderLeft: `4px solid ${msg.sender === 'client' ? '#d4af37' : '#38bdf8'}`,
-                            marginLeft: msg.sender === 'admin' ? 30 : 0,
-                            marginRight: msg.sender === 'client' ? 30 : 0
+                            borderLeft: `4px solid ${
+                              msg.sender === 'client' ? '#d4af37' : msg.sender === 'ai' ? '#a855f7' : '#38bdf8'
+                            }`,
+                            marginLeft: msg.sender === 'admin' ? 25 : (msg.sender === 'ai' ? 15 : 0),
+                            marginRight: msg.sender === 'client' ? 25 : 0
                           }}
                         >
                           <Group justify="space-between" mb={2}>
-                            <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : 'blue'}>
-                              {msg.senderName} {msg.sender === 'client' ? '👑' : '🛡️'}
+                            <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : (msg.sender === 'ai' ? 'grape' : 'blue')}>
+                              {msg.senderName} {msg.sender === 'client' ? '👑' : (msg.sender === 'ai' ? '🤖' : '🛡️')}
                             </Text>
                             <Text size="xs" c="dimmed">{msg.time}</Text>
                           </Group>
                           <Text size="sm">{msg.text}</Text>
                         </Box>
                       ))}
+
+                      {isAiTyping && (
+                        <Group gap="xs" p="xs" style={{ background: 'rgba(168, 85, 247, 0.1)', borderRadius: 8 }}>
+                          <Loader size="xs" color="grape" />
+                          <Text size="xs" c="grape">🤖 Royal AI Concierge javob yozmoqda...</Text>
+                        </Group>
+                      )}
                     </Stack>
                   </ScrollArea>
 
-                  {/* Admin Reply Box */}
+                  {/* Admin AI Actions & Reply Box */}
                   <Stack gap="xs" mt="auto">
-                    <Text size="xs" fw={700} c="dimmed">Admin nomidan tezkor javob yozish:</Text>
+                    <Group justify="space-between">
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="grape"
+                        leftSection={<IconWand size={14} />}
+                        onClick={handleAdminGenerateAISuggestion}
+                      >
+                        🤖 AI Copilot Javob Generatsiya Qilish
+                      </Button>
+                      <Badge size="xs" color={aiAutoReplyEnabled ? 'teal' : 'gray'}>
+                        {aiAutoReplyEnabled ? 'AI Auto-Pilot: ON' : 'AI: OFF'}
+                      </Badge>
+                    </Group>
+
                     <Group gap="xs">
                       <TextInput
-                        placeholder="Mehmon bilan muloqot qiling..."
+                        placeholder="Admin nomidan javob yozing..."
                         value={chatInput}
                         onChange={e => setChatInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && handleSendMessage('admin')}
@@ -1409,15 +1486,18 @@ export default function App() {
       )}
 
       {/* =========================================================================
-          CLIENT LIVE CHAT DRAWER (CLIENT VIEW)
+          CLIENT LIVE CHAT DRAWER WITH INSTANT AI RESPONDER
           ========================================================================= */}
       <Drawer
         opened={clientChatOpen}
         onClose={() => setClientChatOpen(false)}
         title={
           <Group gap="xs">
-            <IconCrown color="#d4af37" size={22} />
-            <Title order={4} size="h5" c="gold">24/7 Shaxsiy Butler & Concierge Desk</Title>
+            <IconRobot color="#d4af37" size={24} />
+            <Stack gap={0}>
+              <Title order={4} size="h5" c="gold">Royal AI Butler & Concierge Desk</Title>
+              <Text size="xs" c="teal">● 24/7 AI va Mehmonxona Adminlari Onlayn</Text>
+            </Stack>
           </Group>
         }
         position="right"
@@ -1425,33 +1505,75 @@ export default function App() {
         styles={{ content: { background: '#0f1626' } }}
       >
         <Stack justify="space-between" h="calc(100vh - 90px)">
-          <ScrollArea h="calc(100vh - 220px)" pr="sm">
+          <ScrollArea h="calc(100vh - 240px)" pr="sm">
             <Stack gap="sm">
               {chatMessages.map(msg => (
                 <Box
                   key={msg.id}
                   p="sm"
                   style={{
-                    background: msg.sender === 'client' ? 'rgba(212, 175, 55, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+                    background: msg.sender === 'client'
+                      ? 'rgba(212, 175, 55, 0.15)'
+                      : msg.sender === 'ai'
+                      ? 'rgba(168, 85, 247, 0.15)'
+                      : 'rgba(56, 189, 248, 0.15)',
                     borderRadius: 10,
-                    borderLeft: `4px solid ${msg.sender === 'client' ? '#d4af37' : '#38bdf8'}`
+                    borderLeft: `4px solid ${
+                      msg.sender === 'client' ? '#d4af37' : msg.sender === 'ai' ? '#a855f7' : '#38bdf8'
+                    }`
                   }}
                 >
                   <Group justify="space-between" mb={2}>
-                    <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : 'blue'}>{msg.senderName}</Text>
+                    <Text size="xs" fw={700} c={msg.sender === 'client' ? 'gold' : (msg.sender === 'ai' ? 'grape' : 'blue')}>
+                      {msg.senderName} {msg.sender === 'client' ? '👑' : (msg.sender === 'ai' ? '🤖' : '🛡️')}
+                    </Text>
                     <Text size="xs" c="dimmed">{msg.time}</Text>
                   </Group>
                   <Text size="sm">{msg.text}</Text>
                 </Box>
               ))}
+
+              {isAiTyping && (
+                <Group gap="xs" p="xs" style={{ background: 'rgba(168, 85, 247, 0.1)', borderRadius: 8 }}>
+                  <Loader size="xs" color="grape" />
+                  <Text size="xs" c="grape">🤖 Royal AI Butler yozmoqda...</Text>
+                </Group>
+              )}
             </Stack>
           </ScrollArea>
 
+          {/* Quick Action Chips */}
           <Stack gap="xs" pt="sm" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <Text size="xs" c="dimmed">Tezkor so'rovlar: Xona tozalash, Restoran buyurtmasi, Shaxsiy transfer</Text>
+            <Group gap={6}>
+              <Badge
+                style={{ cursor: 'pointer' }}
+                color="gold"
+                variant="light"
+                onClick={() => handleSendMessage('client', 'Xonamga nonushta va qahva yetkazib bera olasizmi?')}
+              >
+                ☕ Xonaga nonushta
+              </Badge>
+              <Badge
+                style={{ cursor: 'pointer' }}
+                color="blue"
+                variant="light"
+                onClick={() => handleSendMessage('client', 'Aeroportga Rolls-Royce Phantom transfer kerak')}
+              >
+                🚗 Rolls-Royce Chaqirish
+              </Badge>
+              <Badge
+                style={{ cursor: 'pointer' }}
+                color="teal"
+                variant="light"
+                onClick={() => handleSendMessage('client', 'Xonani tozalash xizmatini yuboring')}
+              >
+                🛎️ Xona tozalash
+              </Badge>
+            </Group>
+
             <Group gap="xs">
               <TextInput
-                placeholder="Butlerga xabar qoldiring..."
+                placeholder="AI Butler yoki Ma'muriyatga yozing..."
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSendMessage('client')}
