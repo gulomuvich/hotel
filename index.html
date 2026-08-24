@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROYAL GRAND PALACE — 5-Star Ultra Luxury Hotel & Resort</title>
+  <meta name="description" content="Royal Grand Palace — Dunyo darajasidagi 5 yulduzli hashamatli mehmonxona, VIP xonalar, shaxsiy haydovchi transferi, gurme restoran va yuqori darajadagi xizmat ko'rsatish tizimi.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Background Ambient Effects -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Header & Navigation -->
+  <header class="luxury-header" id="mainHeader">
+    <div class="header-container">
+      <!-- Brand Logo -->
+      <a href="#" class="brand-logo" id="brandLogo">
+        <div class="logo-emblem">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">ROYAL GRAND</span>
+          <span class="logo-subtitle">PALACE & RESORT ★★★★★</span>
+        </div>
+      </a>
+
+      <!-- Navigation Menu -->
+      <nav class="nav-menu" id="navMenu">
+        <a href="#hero" class="nav-link active" data-nav="home"><i class="fa-solid fa-hotel"></i> <span data-i18n="nav_home">Bosh Sahifa</span></a>
+        <a href="#rooms" class="nav-link" data-nav="rooms"><i class="fa-solid fa-bed"></i> <span data-i18n="nav_rooms">Xonalar & Villalar</span></a>
+        <a href="#chauffeur" class="nav-link" data-nav="chauffeur"><i class="fa-solid fa-car"></i> <span data-i18n="nav_chauffeur">VIP Haydovchi</span></a>
+        <a href="#restaurant" class="nav-link" data-nav="restaurant"><i class="fa-solid fa-utensils"></i> <span data-i18n="nav_restaurant">Gurme Oshxona</span></a>
+        <a href="#services" class="nav-link" data-nav="services"><i class="fa-solid fa-bell-concierge"></i> <span data-i18n="nav_services">Xizmatlar</span></a>
+        <a href="#staff-section" class="nav-link highlight-link" data-nav="staff"><i class="fa-solid fa-users-gear"></i> <span data-i18n="nav_staff">Xodimlar Nazorati</span></a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Language Switcher -->
+        <div class="lang-dropdown">
+          <button class="action-btn lang-btn" id="langBtn" aria-label="Til tanlash">
+            <i class="fa-solid fa-globe"></i>
+            <span id="currentLangLabel">UZ</span>
+            <i class="fa-solid fa-chevron-down arrow-icon"></i>
+          </button>
+          <div class="dropdown-menu" id="langMenu">
+            <button class="dropdown-item active" data-lang="uz">🇺🇿 O'zbekcha</button>
+            <button class="dropdown-item" data-lang="en">🇬🇧 English</button>
+            <button class="dropdown-item" data-lang="ru">🇷🇺 Русский</button>
+          </div>
+        </div>
+
+        <!-- Currency Selector -->
+        <div class="currency-dropdown">
+          <button class="action-btn curr-btn" id="currBtn" aria-label="Valyuta tanlash">
+            <span id="currentCurrLabel">$ USD</span>
+          </button>
+          <div class="dropdown-menu" id="currMenu">
+            <button class="dropdown-item active" data-curr="USD">$ USD</button>
+            <button class="dropdown-item" data-curr="UZS">UZS so'm</button>
+            <button class="dropdown-item" data-curr="EUR">€ EUR</button>
+          </div>
+        </div>
+
+        <!-- Restaurant Cart Toggle -->
+        <button class="action-btn cart-btn" id="cartToggleBtn" aria-label="Oshxona savatchasi">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span class="badge" id="cartCountBadge">0</span>
+        </button>
+
+        <!-- Direct VIP Book Button -->
+        <button class="btn btn-gold book-cta-btn" id="headerBookBtn">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span data-i18n="btn_book_now">Joy Band Qilish</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Menyu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-media-overlay"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+    
+    <div class="hero-container">
+      <div class="hero-badge">
+        <span class="star-rating">★★★★★</span>
+        <span data-i18n="hero_badge">5-Yulduzli Qirollik Hashamati</span>
+      </div>
+
+      <h1 class="hero-title" data-i18n="hero_title">
+        ORZUYINGIZDAGI <span class="gold-gradient-text">ENG HASHAMATLI</span> MEHMONXONA
+      </h1>
+
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        Royal Grand Palace — har bir lahzasi mo'jiza, beqiyos qulaylik, shaxsiy Rolls-Royce haydovchi xizmati va Mishelin darajasidagi gurme oshxona bilan unutilmas tajriba taqdim etadi.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#rooms" class="btn btn-gold btn-lg">
+          <i class="fa-solid fa-key"></i>
+          <span data-i18n="hero_btn_explore">Xonalarni Ko'rish</span>
+        </a>
+        <a href="#chauffeur" class="btn btn-outline-gold btn-lg">
+          <i class="fa-solid fa-car-side"></i>
+          <span data-i18n="hero_btn_transfer">VIP Transfer Buyurtma Qilish</span>
+        </a>
+        <a href="#staff-section" class="btn btn-glass btn-lg" id="quickStaffViewBtn">
+          <i class="fa-solid fa-users-viewfinder"></i>
+          <span data-i18n="hero_btn_staff">Xodimlar Nazorati</span>
+        </a>
+      </div>
+
+      <!-- Quick Search Bar Floating Widget -->
+      <div class="booking-search-bar" id="quickSearch">
+        <form class="search-form" id="heroBookingForm">
+          <div class="search-col">
+            <label><i class="fa-solid fa-calendar-days"></i> <span data-i18n="label_checkin">Kelish Sanasi</span></label>
+            <input type="date" id="heroCheckIn" required>
+          </div>
+          <div class="search-col">
+            <label><i class="fa-solid fa-calendar-check"></i> <span data-i18n="label_checkout">Ketish Sanasi</span></label>
+            <input type="date" id="heroCheckOut" required>
+          </div>
+          <div class="search-col">
+            <label><i class="fa-solid fa-door-open"></i> <span data-i18n="label_room_type">Xona Toifasi</span></label>
+            <select id="heroRoomType">
+              <option value="all" data-i18n="opt_all_rooms">Barcha Xonalar</option>
+              <option value="deluxe" data-i18n="opt_deluxe">Deluxe King Suite</option>
+              <option value="presidential" data-i18n="opt_presidential">Presidential Suite</option>
+              <option value="royal" data-i18n="opt_royal">Royal Penthouse Suite</option>
+              <option value="villa" data-i18n="opt_villa">Oceanfront Private Villa</option>
+            </select>
+          </div>
+          <div class="search-col">
+            <label><i class="fa-solid fa-user-group"></i> <span data-i18n="label_guests">Mehmonlar</span></label>
+            <select id="heroGuests">
+              <option value="1">1 Mehmon</option>
+              <option value="2" selected>2 Mehmon</option>
+              <option value="3">3 Mehmon</option>
+              <option value="4">4+ Mehmon</option>
+            </select>
+          </div>
+          <div class="search-col submit-col">
+            <button type="submit" class="btn btn-gold btn-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span data-i18n="btn_check_availability">Joy Band Qilish</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Metrics Strip -->
+      <div class="hero-stats-strip">
+        <div class="stat-box">
+          <div class="stat-icon"><i class="fa-solid fa-bed"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statsRoomCount">98</span>
+            <span class="stat-label" data-i18n="stat_rooms">VIP Xona & Villalar</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon"><i class="fa-solid fa-user-tie"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statsStaffCount">142</span>
+            <span class="stat-label" data-i18n="stat_staff">Faol Ishchilar Soni</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon"><i class="fa-solid fa-car"></i></div>
+          <div class="stat-info">
+            <span class="stat-number">18</span>
+            <span class="stat-label" data-i18n="stat_fleet">VIP Rolls & Maybach Park</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon"><i class="fa-solid fa-champagne-glasses"></i></div>
+          <div class="stat-info">
+            <span class="stat-number">3</span>
+            <span class="stat-label" data-i18n="stat_restaurants">Mishelin Restoranlari</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: Rooms & Suites Booking -->
+  <section class="section-container" id="rooms">
+    <div class="section-header text-center">
+      <span class="section-tag" data-i18n="tag_rooms">HASHAMAT VA QULAYLIK</span>
+      <h2 class="section-title" data-i18n="title_rooms">Qirollik Xonalari va Shaxsiy Villalar</h2>
+      <p class="section-desc" data-i18n="desc_rooms">Har bir xona shaxsiy did, zamonaviy Smart-Home tizimi, to'liq panelli dengiz manzarasi va 24/7 shaxsiy Butler xizmati bilan jihozlangan.</p>
+      
+      <!-- Room Category Filter Tabs -->
+      <div class="filter-tabs" id="roomFilterTabs">
+        <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Barchasi (8)</button>
+        <button class="filter-btn" data-filter="deluxe" data-i18n="filter_deluxe">Deluxe Suites</button>
+        <button class="filter-btn" data-filter="presidential" data-i18n="filter_presidential">Presidential Suites</button>
+        <button class="filter-btn" data-filter="royal" data-i18n="filter_royal">Royal Penthouse</button>
+        <button class="filter-btn" data-filter="villa" data-i18n="filter_villa">Private Villas</button>
+      </div>
+    </div>
+
+    <!-- Rooms Grid -->
+    <div class="rooms-grid" id="roomsGridContainer">
+      <!-- Dynamic Room Cards Injected via JS -->
+    </div>
+  </section>
+
+  <!-- Section 2: VIP Chauffeur & Fleet Transfer -->
+  <section class="section-container chauffeur-section" id="chauffeur">
+    <div class="chauffeur-bg-decor"></div>
+    <div class="section-header">
+      <span class="section-tag" data-i18n="tag_chauffeur">PREMIUM TRANSFER</span>
+      <h2 class="section-title" data-i18n="title_chauffeur">VIP Haydovchi va Hashamatli Avtopark</h2>
+      <p class="section-desc" data-i18n="desc_chauffeur">Aeroportdan kutib olish, maxsus xizmat safari yoki shahar bo'ylab shaxsiy Rolls-Royce, Mercedes-Maybach va Bentley bilan qirollarga xos transfer.</p>
+    </div>
+
+    <div class="chauffeur-layout">
+      <!-- Fleet Cards Carousel / Showcase -->
+      <div class="fleet-showcase">
+        <div class="fleet-cards-grid" id="fleetGridContainer">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Live Chauffeur Booking Card -->
+      <div class="chauffeur-booking-card">
+        <div class="card-header">
+          <div class="header-icon"><i class="fa-solid fa-car-rear"></i></div>
+          <div>
+            <h3 data-i18n="chauffeur_form_title">Shaxsiy VIP Haydovchi Buyurtma Qilish</h3>
+            <p class="card-sub" data-i18n="chauffeur_form_sub">24/7 tayyor haydovchilar guruhi va premium avtomobillar</p>
+          </div>
+        </div>
+
+        <form id="chauffeurBookingForm" class="chauffeur-form">
+          <div class="form-group">
+            <label><i class="fa-solid fa-car"></i> <span data-i18n="label_select_car">Avtomobilni Tanlang</span></label>
+            <select id="chauffeurCarSelect" required>
+              <option value="rolls_phantom" data-price="450">Rolls-Royce Phantom VIII ($450/kun)</option>
+              <option value="mercedes_maybach" data-price="320" selected>Mercedes-Maybach S680 ($320/kun)</option>
+              <option value="cadillac_escalade" data-price="280">Cadillac Escalade Platinum ($280/kun)</option>
+              <option value="bentley_flying_spur" data-price="390">Bentley Flying Spur Mulliner ($390/kun)</option>
+              <option value="range_rover" data-price="260">Range Rover SV Autobiography ($260/kun)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-route"></i> <span data-i18n="label_service_type">Xizmat Turi</span></label>
+              <select id="chauffeurServiceType">
+                <option value="airport_vip" data-i18n="opt_airport_vip">VIP Aeroport Transferi</option>
+                <option value="hourly_city" data-i18n="opt_hourly_city">Shahar bo'ylab soatbay (4 soat+)</option>
+                <option value="full_day" data-i18n="opt_full_day">To'liq kunlik xizmat (24 soat)</option>
+                <option value="intercity" data-i18n="opt_intercity">Shaharlararo VIP sayohat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-user-tie"></i> <span data-i18n="label_driver_pref">Haydovchi</span></label>
+              <select id="chauffeurDriverSelect">
+                <option value="any">Eng tajribali haydovchi (Barchasi litsenziyali)</option>
+                <option value="jasur">Jasur Karimov (VIP Protokol & Ingliz tili)</option>
+                <option value="alisher">Alisher Rustamov (Diplomatik xizmat tajribasi)</option>
+                <option value="sardor">Sardor Maxmudov (Konvoy va Xavfsizlik)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-location-dot"></i> <span data-i18n="label_pickup_loc">Olish Manzili</span></label>
+              <input type="text" id="chauffeurPickup" placeholder="Aeroport VIP zali yoki Mehmonxona kirishi" required value="Royal Grand Palace Asosiy Kirish">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-clock"></i> <span data-i18n="label_datetime">Sana va Vaqt</span></label>
+              <input type="datetime-local" id="chauffeurDateTime" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-phone"></i> <span data-i18n="label_guest_contact">Aloqa telefoni & Ism</span></label>
+            <input type="text" id="chauffeurContact" placeholder="+998 90 123 45 67 (Mehmon Ismi)" required>
+          </div>
+
+          <div class="price-preview-strip">
+            <div class="price-breakdown">
+              <span data-i18n="chauffeur_est_price">Taxminiy Narx:</span>
+              <span class="gold-amount" id="chauffeurPriceDisplay">$320</span>
+            </div>
+            <div class="status-pill available"><i class="fa-solid fa-circle-check"></i> <span data-i18n="status_instant_confirm">Zudlik bilan tasdiqlanadi</span></div>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-block">
+            <i class="fa-solid fa-car-rear"></i>
+            <span data-i18n="btn_book_chauffeur">VIP Haydovchi Xizmatini Band Qilish</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Fine Dining & Gourmet Kitchen Service -->
+  <section class="section-container" id="restaurant">
+    <div class="section-header text-center">
+      <span class="section-tag" data-i18n="tag_dining">GURME OSHXONA & RESTORAN</span>
+      <h2 class="section-title" data-i18n="title_dining">Mishelin Yulduzli Taomlar va Xona Xizmati</h2>
+      <p class="section-desc" data-i18n="desc_dining">Dunyoning eng mashhur bosh oshpazlaridan noyob taomlar, 24 soatlik xonaga yetkazish xizmati va restoranda elita stollarni band qilish imkoniyati.</p>
+
+      <!-- Category Filter Tabs -->
+      <div class="filter-tabs" id="menuFilterTabs">
+        <button class="filter-btn active" data-menu="all" data-i18n="menu_all">Barcha Menyu</button>
+        <button class="filter-btn" data-menu="breakfast" data-i18n="menu_breakfast">Qirollik Nonushtasi</button>
+        <button class="filter-btn" data-menu="mains" data-i18n="menu_mains">Asosiy Taomlar & Steyk</button>
+        <button class="filter-btn" data-menu="seafood" data-i18n="menu_seafood">Dengiz Mahsulotlari & Ikra</button>
+        <button class="filter-btn" data-menu="desserts" data-i18n="menu_desserts">Eksklyuziv Shirinliklar</button>
+        <button class="filter-btn" data-menu="drinks" data-i18n="menu_drinks">Elita Ichimliklar</button>
+      </div>
+    </div>
+
+    <!-- Dining Split Actions -->
+    <div class="dining-quick-bar">
+      <div class="dining-features">
+        <div class="feature-item"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="feat_delivery_time">Yetkazish: 20-30 daqiqa</span></div>
+        <div class="feature-item"><i class="fa-solid fa-medal"></i> <span data-i18n="feat_michelin">3 Mishelin Yulduzli Oshpazlar</span></div>
+        <div class="feature-item"><i class="fa-solid fa-bell-concierge"></i> <span data-i18n="feat_room_service">24/7 Xonaga Xizmat</span></div>
+      </div>
+      <button class="btn btn-outline-gold" id="openTableModalBtn">
+        <i class="fa-solid fa-champagne-glasses"></i>
+        <span data-i18n="btn_reserve_table">Restoranda Stol Band Qilish</span>
+      </button>
+    </div>
+
+    <!-- Food Menu Grid -->
+    <div class="menu-grid" id="menuGridContainer">
+      <!-- Dynamic Dishes Injected via JS -->
+    </div>
+  </section>
+
+  <!-- Section 4: Premium Hotel Services & Amenities -->
+  <section class="section-container services-section" id="services">
+    <div class="section-header text-center">
+      <span class="section-tag" data-i18n="tag_services">EKSKLYUZIV XIZMATLAR</span>
+      <h2 class="section-title" data-i18n="title_services">Qirollarga Xos Mehmonxona Xizmatlari</h2>
+      <p class="section-desc" data-i18n="desc_services">Sizning rohatlanishingiz va har qanday talabingiz uchun 24 soatlik xizmatlar majmuasi.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-spa"></i></div>
+        <h3>Royal Spa & Wellness Oasis</h3>
+        <p>Himalay tuzli saunalar, oltin niqobli yoshartirish muolajalari va xususiy basseyn.</p>
+        <span class="service-badge">24/7 Ochiq</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-helicopter"></i></div>
+        <h3>Shaxsiy Helipad Transfer</h3>
+        <p>Mehmonxona tomidagi vertolyot maydonchasi orqali aeroportdan 7 daqiqada yetib kelish.</p>
+        <span class="service-badge">VIP Xizmat</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-ship"></i></div>
+        <h3>Royal Yacht Charter</h3>
+        <p>Shaxsiy super-yaxtada quyosh botishini tomosha qilish va dengiz sayohati.</p>
+        <span class="service-badge">Eksklyuziv</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-user-shield"></i></div>
+        <h3>24/7 Shaxsiy Butler & Konsyerj</h3>
+        <p>Har bir lyuks xona uchun tayinlangan shaxsiy yordamchi va individual protokol xizmati.</p>
+        <span class="service-badge">Individual</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-gem"></i></div>
+        <h3>Grand Ballroom & Konferensiya</h3>
+        <p>500 kishilik qirollik to'y zali va xalqaro biznes sammitlar uchun zallar.</p>
+        <span class="service-badge">Bron Qilish</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fa-solid fa-wine-glass"></i></div>
+        <h3>Shaxsiy Sommelier & Tasting</h3>
+        <p>Fransiya va Italiyaning eng sara kolleksiyali sharoblari va eksklyuziv degustatsiya.</p>
+        <span class="service-badge">Mishelin Ta'mi</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Staff & Operations Management Dashboard -->
+  <section class="section-container staff-management-section" id="staff-section">
+    <div class="staff-dashboard-header">
+      <div class="dashboard-title-group">
+        <div class="dashboard-badge"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="badge_management">MEHMONXONA BOSHQARUV MARKAZI</span></div>
+        <h2 class="section-title" data-i18n="title_staff_mgmt">Ishchilar Soni & Xodimlar Nazorati</h2>
+        <p class="section-desc" data-i18n="desc_staff_mgmt">Mehmonxonadagi barcha 140+ nafar xodimlar, smenalar, bo'limlar, vazifalar va mehmonlar xizmatining jonli monitoring tizimi.</p>
+      </div>
+
+      <div class="dashboard-action-buttons">
+        <button class="btn btn-gold" id="openAddStaffModalBtn">
+          <i class="fa-solid fa-user-plus"></i>
+          <span data-i18n="btn_add_employee">Yangi Xodim Qo'shish</span>
+        </button>
+        <button class="btn btn-glass" id="refreshStatsBtn">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span data-i18n="btn_sync_data">Ma'lumotlarni Yangilash</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Staff Metrics Cards -->
+    <div class="staff-kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon gold"><i class="fa-solid fa-users"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label" data-i18n="kpi_total_staff">Jami Ishchilar Soni</span>
+          <span class="kpi-value" id="kpiTotalStaff">142</span>
+          <span class="kpi-growth text-green"><i class="fa-solid fa-arrow-trend-up"></i> +4 yangi bu oy</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon emerald"><i class="fa-solid fa-user-check"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label" data-i18n="kpi_on_duty">Hozir Navbatchilikda</span>
+          <span class="kpi-value" id="kpiOnDutyStaff">86</span>
+          <span class="kpi-sub" data-i18n="kpi_shifts">Kunduzgi va tungi smena</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-bell-concierge"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label" data-i18n="kpi_active_requests">Faol Xizmat So'rovlari</span>
+          <span class="kpi-value" id="kpiActiveRequests">28</span>
+          <span class="kpi-sub" data-i18n="kpi_avg_response">O'rtacha bajarish: 8 daq</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon purple"><i class="fa-solid fa-hotel"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label" data-i18n="kpi_occupancy">Xonalar Bandligi</span>
+          <span class="kpi-value" id="kpiOccupancy">84%</span>
+          <span class="kpi-sub">82 / 98 Xona band</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Roster Breakdown & Staff Table -->
+    <div class="staff-content-split">
+      <!-- Left: Department Breakdown -->
+      <div class="dept-summary-card">
+        <h3 class="dept-card-title"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="title_departments">Bo'limlar Bo'yicha Xodimlar</span></h3>
+        <div class="dept-list" id="deptListContainer">
+          <!-- Dynamic department items -->
+        </div>
+      </div>
+
+      <!-- Right: Staff Table & Live Management -->
+      <div class="staff-table-wrapper">
+        <div class="table-toolbar">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="staffSearchInput" placeholder="Xodim ismi yoki lavozimi bo'yicha qidirish...">
+          </div>
+          <div class="dept-filter-select">
+            <select id="staffDeptFilter">
+              <option value="all" data-i18n="opt_all_dept">Barcha Bo'limlar</option>
+              <option value="Qabulxona & Konsyerj">Qabulxona & Konsyerj</option>
+              <option value="Oshxona & Restoran">Oshxona & Restoran</option>
+              <option value="Xona Xizmati & Tozalik">Xona Xizmati & Tozalik</option>
+              <option value="VIP Haydovchilar">VIP Haydovchilar</option>
+              <option value="Xavfsizlik & Muhandislik">Xavfsizlik & Muhandislik</option>
+              <option value="Spa & Salomatlik">Spa & Salomatlik</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_employee">Xodim</th>
+                <th data-i18n="th_department">Bo'lim & Lavozim</th>
+                <th data-i18n="th_shift">Smena</th>
+                <th data-i18n="th_status">Holati</th>
+                <th data-i18n="th_rating">Reyting</th>
+                <th data-i18n="th_actions">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Hotel Operations Log -->
+    <div class="live-activity-box">
+      <div class="activity-header">
+        <div class="pulse-indicator"></div>
+        <h4 data-i18n="title_live_feed">Jonli Mehmonxona Xizmatlari Jurnali (Live Activity Feed)</h4>
+      </div>
+      <div class="activity-feed" id="activityFeedList">
+        <!-- Live activity entries -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Testimonials & Reviews -->
+  <section class="section-container reviews-section">
+    <div class="section-header text-center">
+      <span class="section-tag" data-i18n="tag_reviews">MEHMONLAR TAASUROTI</span>
+      <h2 class="section-title" data-i18n="title_reviews">Dunyo Elitasi Biz Haqimizda</h2>
+      <p class="section-desc" data-i18n="desc_reviews">Qirollar, diplomatlar va nufuzli mehmonlarimizning Royal Grand Palace haqidagi fikrlari.</p>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Prezident Penthouse xonasining manzarasi va Rolls-Royce xizmati shunchaki aqlbovar qilmas! Mehmonxona xodimlari har bir kichik talabimni sekundlarda bajardi."</p>
+        <div class="reviewer-info">
+          <div class="reviewer-avatar"><i class="fa-solid fa-user-tie"></i></div>
+          <div>
+            <h4>Lord Alexander Wright</h4>
+            <span>London, Buyuk Britaniya</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Restoranning dengiz mahsulotlari va Bosh oshpazning maxsus deserti Mishelin yulduziga to'la loyiq. 24/7 shaxsiy butler xizmati esa haqiqiy qirollik tajribasi!"</p>
+        <div class="reviewer-info">
+          <div class="reviewer-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+          <div>
+            <h4>Kenji Takahashi</h4>
+            <span>Tokio, Yaponiya</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Oila a'zolarimiz bilan Oceanfront Villada dam oldik. Aeroportdan Maybach kutib olganidan to ketguncha barcha xizmatlar 100% ideal darajada bo'ldi."</p>
+        <div class="reviewer-info">
+          <div class="reviewer-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+          <div>
+            <h4>Elena Rostova</h4>
+            <span>Monako</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="luxury-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="brand-logo">
+          <div class="logo-emblem"><i class="fa-solid fa-crown"></i></div>
+          <div class="logo-text">
+            <span class="logo-title">ROYAL GRAND</span>
+            <span class="logo-subtitle">PALACE & RESORT ★★★★★</span>
+          </div>
+        </div>
+        <p class="footer-about" data-i18n="footer_about">
+          Dunyo darajasidagi 5-yulduzli hashamat, beqiyos mehmondo'stlik, shaxsiy haydovchilik va yuqori darajadagi gurme oshxona xizmati.
+        </p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_quick_links">Tezkor Havolalar</h4>
+        <ul class="footer-links">
+          <li><a href="#rooms" data-i18n="nav_rooms">Xonalar & Villalar</a></li>
+          <li><a href="#chauffeur" data-i18n="nav_chauffeur">VIP Haydovchi</a></li>
+          <li><a href="#restaurant" data-i18n="nav_restaurant">Gurme Restoran</a></li>
+          <li><a href="#services" data-i18n="nav_services">Xizmatlar</a></li>
+          <li><a href="#staff-section" data-i18n="nav_staff">Xodimlar Paneli</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_services_title">Xizmatlarimiz</h4>
+        <ul class="footer-links">
+          <li><a href="#chauffeur">Rolls-Royce Aeroport Transferi</a></li>
+          <li><a href="#restaurant">Xonaga 24/7 Taom Yetkazish</a></li>
+          <li><a href="#services">Royal Spa & Wellness</a></li>
+          <li><a href="#services">Vertolyot Maydonchasi</a></li>
+          <li><a href="#services">Shaxsiy Yaxta Sayohati</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_contact">Aloqa & Rezervatsiya</h4>
+        <ul class="footer-contact-list">
+          <li><i class="fa-solid fa-location-dot"></i> <span>Grand Palace Boulevard 101, Luxury Coast</span></li>
+          <li><i class="fa-solid fa-phone"></i> <span>+998 71 200 77 77 / +998 90 999 00 00</span></li>
+          <li><i class="fa-solid fa-envelope"></i> <span>vip-booking@royalgrandpalace.com</span></li>
+          <li><i class="fa-solid fa-shield-halved"></i> <span>24/7 VIP Concierge & Butler Desk</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 ROYAL GRAND PALACE & RESORT. Barcha huquqlar himoyalangan. Ishlab chiqildi: Gulomuvich Hotel Pro.</p>
+      <div class="bottom-links">
+        <a href="#">Maxfiylik Siyosati</a>
+        <a href="#">Foydalanish Qoidalari</a>
+        <a href="#">VIP Xavfsizlik Kafolati</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- 1. Room Booking Modal -->
+  <div class="modal-overlay" id="roomBookingModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeRoomModalBtn" aria-label="Yopish"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <span class="modal-badge"><i class="fa-solid fa-crown"></i> VIP REZERVATSIYA</span>
+        <h3 id="modalRoomTitle">Presidential Suite Band Qilish</h3>
+        <p class="modal-sub">Iltimos, mehmon tafsilotlari va qulayliklarni tanlang</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-room-preview" id="modalRoomPreviewBox">
+          <!-- Dynamically updated -->
+        </div>
+
+        <form id="roomReservationForm" class="modal-form">
+          <input type="hidden" id="modalSelectedRoomId">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-calendar-days"></i> Kelish Sanasi</label>
+              <input type="date" id="modalCheckIn" required>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-calendar-check"></i> Ketish Sanasi</label>
+              <input type="date" id="modalCheckOut" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-user"></i> To'liq Ism (Passport bo'yicha)</label>
+              <input type="text" id="modalGuestName" placeholder="Alisher Qodirov" required>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-envelope"></i> Elektron Pochta</label>
+              <input type="email" id="modalGuestEmail" placeholder="guest@vip.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-phone"></i> Telefon Raqam</label>
+              <input type="tel" id="modalGuestPhone" placeholder="+998 90 123 45 67" required>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-user-group"></i> Mehmonlar Soni</label>
+              <select id="modalGuestCount">
+                <option value="1">1 Kishi</option>
+                <option value="2" selected>2 Kishi</option>
+                <option value="3">3 Kishi</option>
+                <option value="4">4+ Kishi (VIP Suite)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Extra VIP Add-ons -->
+          <div class="extras-section">
+            <label class="extras-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Qo'shimcha VIP Xizmatlar:</label>
+            <div class="extras-grid">
+              <label class="extra-checkbox">
+                <input type="checkbox" id="extraTransfer" value="150">
+                <span><i class="fa-solid fa-car"></i> Rolls-Royce Transfer (+$150)</span>
+              </label>
+              <label class="extra-checkbox">
+                <input type="checkbox" id="extraChampagne" value="95">
+                <span><i class="fa-solid fa-wine-bottle"></i> Xonada Dom Pérignon (+$95)</span>
+              </label>
+              <label class="extra-checkbox">
+                <input type="checkbox" id="extraSpa" value="120">
+                <span><i class="fa-solid fa-spa"></i> Cheksiz VIP Spa Kirish (+$120)</span>
+              </label>
+              <label class="extra-checkbox">
+                <input type="checkbox" id="extraButler" value="80">
+                <span><i class="fa-solid fa-user-tie"></i> 24/7 Shaxsiy Butler (+$80)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Total Calculation Breakdown -->
+          <div class="modal-pricing-summary">
+            <div class="summary-line">
+              <span>Kunlar soni:</span>
+              <strong id="modalNightsCount">1 kecha</strong>
+            </div>
+            <div class="summary-line">
+              <span>Xona narxi:</span>
+              <strong id="modalBaseRoomPrice">$0</strong>
+            </div>
+            <div class="summary-line">
+              <span>Qo'shimcha xizmatlar:</span>
+              <strong id="modalExtrasPrice">$0</strong>
+            </div>
+            <div class="summary-line total-line">
+              <span>Jami To'lov:</span>
+              <span class="total-gold-price" id="modalTotalCalculatedPrice">$0</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-block btn-lg">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Band Qilishni Tasdiqlash & Vaucher Olish</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Booking Success & Voucher Modal -->
+  <div class="modal-overlay" id="voucherModal">
+    <div class="modal-card voucher-card">
+      <button class="modal-close-btn" id="closeVoucherBtn" aria-label="Yopish"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="voucher-decor-top"></div>
+      <div class="voucher-content" id="voucherPrintableArea">
+        <div class="voucher-header">
+          <div class="voucher-emblem"><i class="fa-solid fa-crown"></i></div>
+          <h3>ROYAL GRAND PALACE</h3>
+          <span class="voucher-subtitle">RASMIY VIP BRON VAUCHERI (CONFIRMED)</span>
+          <div class="voucher-code" id="voucherCodeDisplay">GP-89241</div>
+        </div>
+
+        <div class="voucher-details-grid" id="voucherDetailsBox">
+          <!-- Dynamically injected -->
+        </div>
+
+        <div class="voucher-qr-box">
+          <div class="qr-mockup">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
+          <div class="qr-info">
+            <p><strong>Elektron Ro'yxatdan O'tish Kodi</strong></p>
+            <small>Mehmonxonaga kelganda ushbu vaucherni taqdim eting</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer voucher-actions">
+        <button class="btn btn-gold" id="printVoucherBtn"><i class="fa-solid fa-print"></i> Vaucherni Chop Etish / Saqlash</button>
+        <button class="btn btn-glass" id="doneVoucherBtn">Tayyor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Restaurant Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span>Gurme Oshxona Savatchasi</span>
+      </div>
+      <button class="drawer-close-btn" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="drawer-body" id="cartItemsContainer">
+      <!-- Cart items injected via JS -->
+    </div>
+
+    <div class="drawer-footer">
+      <div class="cart-room-select">
+        <label><i class="fa-solid fa-door-closed"></i> Yetkazish Xonasi / Manzili:</label>
+        <input type="text" id="cartRoomNumber" placeholder="Masalan: Suite 702 yoki Villa 4" required>
+      </div>
+
+      <div class="cart-total-row">
+        <span>Jami Taomlar Narxi:</span>
+        <span class="cart-total-amount" id="cartTotalDisplay">$0</span>
+      </div>
+
+      <button class="btn btn-gold btn-block" id="checkoutCartBtn">
+        <i class="fa-solid fa-bell-concierge"></i>
+        <span>Xonaga Buyurtma Berish</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- 4. Table Reservation Modal -->
+  <div class="modal-overlay" id="tableModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeTableModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <span class="modal-badge"><i class="fa-solid fa-utensils"></i> RESTORAN REZERVATSIYASI</span>
+        <h3>Mishelin Gurme Restoranida Stol Band Qilish</h3>
+        <p class="modal-sub">Oqshom shami va shaxsiy shou uchun joy band qiling</p>
+      </div>
+
+      <form id="tableReservationForm" class="modal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fa-solid fa-calendar"></i> Sana & Vaqt</label>
+            <input type="datetime-local" id="tableDateTime" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-users"></i> Mehmonlar Soni</label>
+            <select id="tableGuests">
+              <option value="2">2 Kishi (Romantik Oqshom)</option>
+              <option value="4">4 Kishi (Oilaviy)</option>
+              <option value="6">6 Kishi (VIP Do'stlar)</option>
+              <option value="10">10+ Kishi (Banket Stol)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-chair"></i> Joylashuv Hududi</label>
+          <select id="tableZone">
+            <option value="terrace">Panoramik Ochiq Terrasa (Dengiz manzarasi)</option>
+            <option value="vip_hall">Royal VIP Zali (Jonli Royal Pianino)</option>
+            <option value="sommelier">Sommelier Tasting Zonasi</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fa-solid fa-user"></i> Ism va Familiya</label>
+            <input type="text" id="tableName" placeholder="Mehmon Ismi" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-phone"></i> Telefon</label>
+            <input type="tel" id="tablePhone" placeholder="+998 90 123 45 67" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-comment-dots"></i> Maxsus Istaklar (Masalan: Tug'ilgan kun shamchalari)</label>
+          <input type="text" id="tableSpecialNotes" placeholder="Shaxsiy istaklaringiz...">
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-block btn-lg">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Stolni Tasdiqlash</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Add Employee / Staff Modal -->
+  <div class="modal-overlay" id="addStaffModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeAddStaffModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <span class="modal-badge"><i class="fa-solid fa-user-plus"></i> KADRLAR BOSHQARUVI</span>
+        <h3>Yangi Mehmonxona Xodimini Ro'yxatga Olish</h3>
+        <p class="modal-sub">Xodim ma'lumotlari, lavozimi va smenasini belgilang</p>
+      </div>
+
+      <form id="addStaffForm" class="modal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fa-solid fa-user"></i> Xodim Ismi va Familiyasi</label>
+            <input type="text" id="staffNameInput" placeholder="Masalan: Sardor Toirov" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-briefcase"></i> Lavozimi</label>
+            <input type="text" id="staffRoleInput" placeholder="Masalan: Bosh Konsyerj" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fa-solid fa-building"></i> Bo'lim</label>
+            <select id="staffDeptInput" required>
+              <option value="Qabulxona & Konsyerj">Qabulxona & Konsyerj</option>
+              <option value="Oshxona & Restoran">Oshxona & Restoran</option>
+              <option value="Xona Xizmati & Tozalik">Xona Xizmati & Tozalik</option>
+              <option value="VIP Haydovchilar">VIP Haydovchilar</option>
+              <option value="Xavfsizlik & Muhandislik">Xavfsizlik & Muhandislik</option>
+              <option value="Spa & Salomatlik">Spa & Salomatlik</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-clock"></i> Smena</label>
+            <select id="staffShiftInput" required>
+              <option value="Kunduzgi (08:00 - 18:00)">Kunduzgi (08:00 - 18:00)</option>
+              <option value="Tungi (18:00 - 08:00)">Tungi (18:00 - 08:00)</option>
+              <option value="24/7 Navbatchilik">24/7 Navbatchilik</option>
+              <option value="Moslashuvchan">Moslashuvchan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fa-solid fa-signal"></i> Boshlang'ich Holati</label>
+            <select id="staffStatusInput">
+              <option value="Navbatchilikda">Navbatchilikda (Faol)</option>
+              <option value="Dam olishda">Dam olishda</option>
+              <option value="Tanaffusda">Tanaffusda</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-phone"></i> Telefon Raqam</label>
+            <input type="tel" id="staffPhoneInput" placeholder="+998 90 555 12 34" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-block btn-lg">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Xodimlar Ro'yxatiga Qo'shish</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
